@@ -9,3 +9,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "CloneCoil"
 include(":app")
+include(":coil-base")

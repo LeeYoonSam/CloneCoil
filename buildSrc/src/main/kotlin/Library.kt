@@ -1,7 +1,7 @@
 object Library {
     // CORE
     private const val COROUTINES_VERSION = "1.2.2"
-    const val KOTLINX_COROUTINES_VERSION = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$COROUTINES_VERSION"
+    const val KOTLINX_COROUTINES_ANDROID = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$COROUTINES_VERSION"
 
     const val ANDROIDX_ANNOTATION = "androidx.annotation:annotation:1.1.0"
     const val ANDROIDX_APPCOMPAT = "androidx.appcompat:appcompat:1.3.1"
