@@ -33,6 +33,13 @@ class ImageViewTarget(override val view: ImageView) : PoolableViewTarget<ImageVi
         updateAnimation()
     }
 
+    /**
+     * 요청 성공한 [Drawable]을 현재 드로어블과 크로스페이드하는 내부 메서드입니다.
+     *
+     * [Request.crossfadeMillis] > 0인 경우 [onSuccess] 대신 호출됩니다.
+     *
+     * 애니메이션에서 아직 사용 중인 현재 드로어블을 풀링하지 않도록 애니메이션이 완료될 때까지 요청이 일시 중단됩니다.
+     */
     internal suspend inline fun onSuccessCrossfade(
         result: Drawable,
         duration: Int
@@ -55,7 +62,7 @@ class ImageViewTarget(override val view: ImageView) : PoolableViewTarget<ImageVi
 
     private fun updateAnimation() {
         val animatable = view.drawable as? Animatable ?: return
-        if (isStarted) animatable.start()else animatable.stop()
+        if (isStarted) animatable.start() else animatable.stop()
 
     }
 }
