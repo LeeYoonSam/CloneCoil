@@ -20,7 +20,7 @@ interface Target {
      * 이미지 요청이 성공하면 호출 됩니다.
      */
     @MainThread
-    fun onSuccess(placeHolder: Drawable?) {}
+    fun onSuccess(result: Drawable) {}
 
     /**
      * 이미지 요청이 실패하면 호출 됩니다.
