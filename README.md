@@ -33,3 +33,13 @@
 
 
 
+# Documentation
+
+## Fetcher
+> 이미지를 가져올때 사용
+
+### BitmapFetcher
+> Bitmap을 받아서 BitmapDrawable 을 변환한 DrawableResult 반환(메모리)
+
+### ResourceFetcher
+> @DrawableRes 를 사용해서 resId를 기준으로 DrawableResult(Vector Image)/SourceResult(resource 를 buffered source 로 변환) 2가지 결과를 반환
