@@ -22,7 +22,7 @@ interface Fetcher<T : Any> {
     fun key(data: T): String? = null
 
     /**
-     * [데이터]를 메모리에 로드합니다. 필요한 모든 가져오기 작업을 수행합니다.
+     * [data]를 메모리에 로드합니다. 필요한 모든 가져오기 작업을 수행합니다.
      *
      * @param pool [Bitmap] 인스턴스를 요청하는 데 사용할 수 있는 [BitmapPool]입니다.
      * @param data 로드할 데이터입니다.
