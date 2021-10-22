@@ -49,3 +49,6 @@
 
 ### UriFetcher
 > Uri 로 SourceResult(BufferedSource) 를 반환(디스크)
+
+### HttpUrlFetcher
+> HttpUrl 로 SourceResult 를 반환, DataSource.DISK or DataSource.NETWORK
