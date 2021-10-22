@@ -43,3 +43,6 @@
 
 ### ResourceFetcher
 > @DrawableRes 를 사용해서 resId를 기준으로 DrawableResult(Vector Image)/SourceResult(resource 를 buffered source 로 변환) 2가지 결과를 반환
+
+### DrawableFetcher
+> drawable 로 변환한 DrawableResult 반환(메모리)
