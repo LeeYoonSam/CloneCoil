@@ -46,3 +46,6 @@
 
 ### DrawableFetcher
 > drawable 로 변환한 DrawableResult 반환(메모리)
+
+### UriFetcher
+> Uri 로 SourceResult(BufferedSource) 를 반환(디스크)
