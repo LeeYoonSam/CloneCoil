@@ -55,7 +55,10 @@
 
 
 ## Decoder
-> [BufferedSource]를 [Drawable]로 변환합니다.
+> BufferedSource를 Drawable로 변환합니다.
 
 ### EmptyDecoder
-> 소스를 소진하고 하드코딩된 빈 결과를 반환하는 [Decoder]입니다.
+> 소스를 소진하고 하드코딩된 빈 결과를 반환하는 Decoder 입니다.
+
+### BitmapFactoryDecoder
+> BitmapFactory를 사용하여 지정된 BufferedSource 디코딩을 시도하는 기본 Decoder입니다.

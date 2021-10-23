@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.os.Build
 import androidx.core.graphics.drawable.toDrawable
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Call
@@ -32,4 +33,13 @@ internal fun Closeable.closeQuietly() {
     } catch (rethrown: RuntimeException) {
         throw rethrown
     } catch (ignored: Exception) {}
+}
+
+/** null 및 [Bitmap.Config.HARDWARE] 구성을 [Bitmap.Config.ARGB_8888]로 변환합니다. */
+internal fun Bitmap.Config?.normalize(): Bitmap.Config {
+    return if (this == null || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && this == Bitmap.Config.HARDWARE)) {
+        Bitmap.Config.ARGB_8888
+    } else {
+        this
+    }
 }
