@@ -8,6 +8,7 @@ import androidx.core.graphics.drawable.toDrawable
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Call
 import okhttp3.Response
+import java.io.Closeable
 
 internal suspend inline fun Call.await(): Response {
     return suspendCancellableCoroutine { continuation ->
@@ -24,3 +25,11 @@ internal val Drawable.width: Int
 
 internal val Drawable.height: Int
     get() = (this as? BitmapDrawable)?.bitmap?.height ?: intrinsicHeight
+
+internal fun Closeable.closeQuietly() {
+    try {
+        close()
+    } catch (rethrown: RuntimeException) {
+        throw rethrown
+    } catch (ignored: Exception) {}
+}
