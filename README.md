@@ -52,3 +52,8 @@
 
 ### HttpUrlFetcher
 > HttpUrl 로 SourceResult 를 반환, DataSource.DISK or DataSource.NETWORK
+
+
+## Decoder
+> [BufferedSource]를 [Drawable]로 변환합니다.
+
