@@ -71,11 +71,15 @@
 > Bitmap.reconfigure에 의존하는 비트맵 재사용 전략.
 
 - SDK_INT >= M
-- Bitmap의 메모리 크기를 바이트 단위를 key 로 사용
+- GroupedLinkedMap 의 키를 Bitmap의 메모리 크기의 바이트 단위를 사용
 - LRU Pool 을 사용
 
 ### SizeConfigStrategy
 - SDK_INT >= KITKAT
 
 ### AttributeStrategy
+> 반환된 비트맵의 치수가 요청한 치수와 정확히 일치해야 하는 비트맵 재사용 전략입니다.
+
 - KITKAT 이하 버전
+- GroupedLinkedMap 의 키를 width, height, Bitmap.Config 3가지를 사용
+- width, height, Bitmap.Config 3가지가 다르면 다른 비트맵으로 인지

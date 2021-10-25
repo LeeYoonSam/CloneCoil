@@ -2,7 +2,7 @@ package com.ys.coil.bitmappool.strategy
 
 import android.graphics.Bitmap
 
-class SizeConfigStrategy : BitmapPoolStrategy {
+internal class SizeConfigStrategy : BitmapPoolStrategy {
     override fun put(bitmap: Bitmap) {
         TODO("Not yet implemented")
     }

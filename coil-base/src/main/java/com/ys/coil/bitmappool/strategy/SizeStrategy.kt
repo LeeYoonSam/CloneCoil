@@ -18,7 +18,7 @@ import java.util.*
  * 기술적으로 이 전략에 대한 API는 [KITKAT] 이후로 사용할 수 있지만 프레임워크 버그로 인해 [M]까지 이 전략을 사용해서는 안 됩니다.
  */
 @RequiresApi(M)
-class SizeStrategy : BitmapPoolStrategy {
+internal class SizeStrategy : BitmapPoolStrategy {
 
     companion object {
         private const val MAX_SIZE_MULTIPLE = 8
