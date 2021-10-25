@@ -19,7 +19,38 @@ internal suspend inline fun Call.await(): Response {
     }
 }
 
+internal fun Bitmap.Config?.getBytesPerPixel(): Int {
+    return when {
+        this == Bitmap.Config.ALPHA_8 -> 1
+        this == Bitmap.Config.RGB_565 -> 2
+        this == Bitmap.Config.ARGB_4444 -> 2
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && this == Bitmap.Config.RGBA_F16 -> 8
+        else -> 4
+    }
+}
+
+internal inline fun <T> MutableList<T>?.orEmpty(): MutableList<T> = this ?: mutableListOf()
+
+internal inline fun <T> MutableList<T>.removeLast(): T? = if (isNotEmpty()) removeAt(lastIndex) else null
+
 internal inline fun Bitmap.toDrawable(context: Context): BitmapDrawable = toDrawable(context.resources)
+
+/**
+ * 주어진 [Bitmap]의 메모리 크기를 바이트 단위로 반환합니다.
+ */
+internal fun Bitmap.getAllocationByteCountCompat(): Int {
+    check(!isRecycled) { "Cannot obtain size for recycled Bitmap: $this [$width x $height] + $config" }
+
+    return try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            allocationByteCount
+        } else {
+            rowBytes * height
+        }
+    } catch (ignored: Exception) {
+        Utils.calculateAllocationByteCount(width, height, config)
+    }
+}
 
 internal val Drawable.width: Int
     get() = (this as? BitmapDrawable)?.bitmap?.width ?: intrinsicWidth

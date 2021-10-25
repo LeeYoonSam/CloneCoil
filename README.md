@@ -62,3 +62,20 @@
 
 ### BitmapFactoryDecoder
 > BitmapFactory를 사용하여 지정된 BufferedSource 디코딩을 시도하는 기본 Decoder입니다.
+
+
+## BitmapPoolStrategy
+> BitmapPool 전략, OS Level 에 따라 다른 전략을 채택
+
+### SizeStrategy
+> Bitmap.reconfigure에 의존하는 비트맵 재사용 전략.
+
+- SDK_INT >= M
+- Bitmap의 메모리 크기를 바이트 단위를 key 로 사용
+- LRU Pool 을 사용
+
+### SizeConfigStrategy
+- SDK_INT >= KITKAT
+
+### AttributeStrategy
+- KITKAT 이하 버전
