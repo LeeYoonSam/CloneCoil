@@ -75,6 +75,9 @@
 - LRU Pool 을 사용
 
 ### SizeConfigStrategy
+> [Bitmap.getAllocationByteCountCompat] 및 [Bitmap.getConfig]에서 반환된 [Bitmap.Config]를 모두 사용하는 [Bitmap] 키입니다.\
+  [Bitmap]의 할당 횟수와 구성을 모두 사용하면 더 다양한 [Bitmap]을 안전하게 재사용할 수 있으므로 풀의 적중률이 증가하여 애플리케이션의 성능이 향상됩니다.
+
 - SDK_INT >= KITKAT
 
 ### AttributeStrategy
