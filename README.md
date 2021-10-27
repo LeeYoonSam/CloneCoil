@@ -96,3 +96,10 @@
 
 ### RoundedCornersTransformation
 > 이미지의 모서리를 둥글게 만드는 Transformation
+
+### CircleCropTransformation
+> 가운데 원을 마스크로 사용하여 이미지를 자르는 Transformation
+
+### 참고
+[PorterDuff.Mode](https://developer.android.com/reference/android/graphics/PorterDuff.Mode)
+- 이미지 합성
