@@ -91,3 +91,5 @@
 ## Transformation
 > 이미지의 픽셀 데이터를 변환하기 위한 인터페이스입니다.
 
+### GrayscaleTransformation
+> 이미지를 회색 음영으로 변환하는 Transformation입니다.
