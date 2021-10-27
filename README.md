@@ -86,3 +86,8 @@
 - JELLY_BEAN(18) 이하 버전에서 사용
 - GroupedLinkedMap 의 키를 width, height, Bitmap.Config 3가지를 사용
 - width, height, Bitmap.Config 3가지가 다르면 다른 비트맵으로 인지
+
+
+## Transformation
+> 이미지의 픽셀 데이터를 변환하기 위한 인터페이스입니다.
+
