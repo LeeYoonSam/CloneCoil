@@ -100,6 +100,10 @@
 ### CircleCropTransformation
 > 가운데 원을 마스크로 사용하여 이미지를 자르는 Transformation
 
+### BlurTransformation
+> 이미지에 가우시안 블러를 적용하는 Transformation
+
+
 ### 참고
 [PorterDuff.Mode](https://developer.android.com/reference/android/graphics/PorterDuff.Mode)
 - 이미지 합성
