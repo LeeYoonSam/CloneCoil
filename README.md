@@ -70,19 +70,19 @@
 ### SizeStrategy
 > Bitmap.reconfigure에 의존하는 비트맵 재사용 전략.
 
-- SDK_INT >= M
+- M 이상에서 사용
 - GroupedLinkedMap 의 키를 Bitmap의 메모리 크기의 바이트 단위를 사용
 - LRU Pool 을 사용
 
 ### SizeConfigStrategy
-> [Bitmap.getAllocationByteCountCompat] 및 [Bitmap.getConfig]에서 반환된 [Bitmap.Config]를 모두 사용하는 [Bitmap] 키입니다.\
-  [Bitmap]의 할당 횟수와 구성을 모두 사용하면 더 다양한 [Bitmap]을 안전하게 재사용할 수 있으므로 풀의 적중률이 증가하여 애플리케이션의 성능이 향상됩니다.
+> Bitmap.getAllocationByteCountCompat 및 Bitmap.Config를 모두 사용하는 Bitmap 키입니다.\
+  Bitmap의 할당 횟수와 구성을 모두 사용하면 더 다양한 Bitmap을 안전하게 재사용할 수 있으므로 풀의 적중률이 증가하여 애플리케이션의 성능이 향상됩니다.
 
-- SDK_INT >= KITKAT
+- KITKAT 이상에서 사용
 
 ### AttributeStrategy
 > 반환된 비트맵의 치수가 요청한 치수와 정확히 일치해야 하는 비트맵 재사용 전략입니다.
 
-- KITKAT 이하 버전
+- JELLY_BEAN(18) 이하 버전에서 사용
 - GroupedLinkedMap 의 키를 width, height, Bitmap.Config 3가지를 사용
 - width, height, Bitmap.Config 3가지가 다르면 다른 비트맵으로 인지
