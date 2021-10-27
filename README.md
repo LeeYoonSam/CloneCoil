@@ -93,3 +93,6 @@
 
 ### GrayscaleTransformation
 > 이미지를 회색 음영으로 변환하는 Transformation입니다.
+
+### RoundedCornersTransformation
+> 이미지의 모서리를 둥글게 만드는 Transformation
