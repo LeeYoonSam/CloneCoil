@@ -103,7 +103,11 @@
 ### BlurTransformation
 > 이미지에 가우시안 블러를 적용하는 Transformation
 
-
 ### 참고
-[PorterDuff.Mode](https://developer.android.com/reference/android/graphics/PorterDuff.Mode)
-- 이미지 합성
+[이미지 합성, PorterDuff.Mode](https://developer.android.com/reference/android/graphics/PorterDuff.Mode)
+
+
+## Memory
+
+### BitmapReferenceCounter
+> Bitmap에 대한 참조를 계산합니다. 더 이상 참조되지 않는 경우 bitmapPool에 비트맵을 추가합니다.
