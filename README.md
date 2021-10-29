@@ -111,3 +111,6 @@
 
 ### BitmapReferenceCounter
 > Bitmap에 대한 참조를 계산합니다. 더 이상 참조되지 않는 경우 bitmapPool에 비트맵을 추가합니다.
+
+### MemoryCache
+> 최근에 메모리에 로드된 Bitmap에 대한 LRU 캐시입니다.
