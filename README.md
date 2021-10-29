@@ -117,3 +117,6 @@
 
 ### RequestService
 > Request에 대해 작동하는 작업을 처리합니다.
+
+### DelegateService
+> DelegateService는 Target을 래핑하여 Bitmap 풀링을 지원하고 Request를 래핑하여 수명 주기를 관리합니다.

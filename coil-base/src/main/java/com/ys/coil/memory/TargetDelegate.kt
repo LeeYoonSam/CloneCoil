@@ -33,14 +33,14 @@ internal sealed class TargetDelegate {
 }
 
 /**
- * An empty target delegate. Used if the request has no target and does not need to invalidate Bitmaps.
+ * 비어있는 대상의 Delegate. 요청에 대상이 없고 비트맵을 무효화할 필요가 없는 경우에 사용됩니다.
  */
 internal object EmptyTargetDelegate : TargetDelegate()
 
 /**
- * Only invalidate the success Bitmap.
+ * 성공한 Bitmap만 무효화합니다.
  *
- * Used if [Request.target] is null and the success [Drawable] is leaked.
+ * [Request.target]이 null이고 성공 [Drawable]이 누출된 경우에 사용됩니다.
  *
  * @see ImageLoader.get
  */
@@ -54,7 +54,7 @@ internal class InvalidatableEmptyTargetDelegate(
 }
 
 /**
- * Invalidate the cached Bitmap and the success Bitmap.
+ * 캐시된 비트맵과 성공 비트맵을 무효화합니다.
  */
 internal class InvalidatableTargetDelegate(
     val target: Target,
@@ -77,7 +77,7 @@ internal class InvalidatableTargetDelegate(
 }
 
 /**
- * Handle the reference counts for the cached Bitmap and the success Bitmap.
+ * 캐시된 비트맵 및 성공 비트맵에 대한 참조 카운트를 처리합니다.
  */
 internal class PoolableTargetDelegate(
     override val target: PoolableViewTarget<*>,
@@ -120,14 +120,14 @@ private interface Poolable {
     val referenceCounter: BitmapReferenceCounter
 
     /**
-     * Increment the reference counter for the current Bitmap.
+     * 현재 Bitmap에 대한 참조 카운터를 증가시킵니다.
      */
     fun increment(bitmap: Bitmap?) {
         bitmap?.let(referenceCounter::increment)
     }
 
     /**
-     * Replace the reference to the currently cached Bitmap.
+     * 현재 캐시된 비트맵에 대한 참조를 바꿉니다.
      */
     fun decrement(bitmap: Bitmap?) {
         target.bitmap?.let(referenceCounter::decrement)
