@@ -6,6 +6,9 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.core.graphics.drawable.toDrawable
+import com.ys.coil.R
+import com.ys.coil.memory.ViewTargetRequestManager
+import com.ys.coil.target.ViewTarget
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Call
 import okhttp3.Response
@@ -74,3 +77,17 @@ internal fun Bitmap.Config?.normalize(): Bitmap.Config {
         this
     }
 }
+
+internal val ViewTarget<*>.requestManager: ViewTargetRequestManager
+    get() {
+        var manager = view.getTag(R.id.coil_request_manager) as? ViewTargetRequestManager
+        if (manager == null) {
+            manager = ViewTargetRequestManager().apply {
+                view.addOnAttachStateChangeListener(this)
+                view.setTag(R.id.coil_request_manager, this)
+            }
+        }
+        return manager
+    }
+
+internal fun ViewTarget<*>.cancel() = requestManager.setRequest(null)
