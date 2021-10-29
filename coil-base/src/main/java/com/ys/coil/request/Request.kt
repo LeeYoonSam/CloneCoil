@@ -11,6 +11,7 @@ import com.ys.coil.size.Scale
 import com.ys.coil.size.SizeResolver
 import com.ys.coil.target.Target
 import com.ys.coil.transform.Transformation
+import com.ys.coil.util.getDrawableCompat
 import kotlinx.coroutines.CoroutineDispatcher
 
 /**
@@ -72,6 +73,30 @@ sealed class Request {
         fun onError(data: Any, throwable: Throwable) {}
     }
 
+    /**
+     * A value object that represents a *load* image request.
+     *
+     * Instances can be created ad hoc:
+     * ```
+     * imageLoader.load(context, "https://www.example.com/image.jpg") {
+     *     crossfade(true)
+     *     target(imageView)
+     * }
+     * ```
+     *
+     * Or instances can be created separately from the call that executes them:
+     * ```
+     * val request = LoadRequest(context, imageLoader.defaults) {
+     *     data("https://www.example.com/image.jpg")
+     *     crossfade(true)
+     *     target(imageView)
+     * }
+     * imageLoader.load(request)
+     * ```
+     *
+     * @see LoadRequestBuilder
+     * @see ImageLoader.load
+     */
     class LoadRequest internal constructor(
         val context: Context,
         override val data: Any?,
@@ -95,63 +120,8 @@ sealed class Request {
         @DrawableRes internal val errorResId: Int,
         internal val placeholderDrawable: Drawable?,
         internal val errorDrawable: Drawable?
-    ): Request() {
-        override val placeholder: Drawable?
-            get() = TODO("Not yet implemented")
-        override val error: Drawable?
-            get() = TODO("Not yet implemented")
+    ) : Request() {
 
-    }
-
-//    /**
-//     * A value object that represents a *load* image request.
-//     *
-//     * Instances can be created ad hoc:
-//     * ```
-//     * imageLoader.load(context, "https://www.example.com/image.jpg") {
-//     *     crossfade(true)
-//     *     target(imageView)
-//     * }
-//     * ```
-//     *
-//     * Or instances can be created separately from the call that executes them:
-//     * ```
-//     * val request = LoadRequest(context, imageLoader.defaults) {
-//     *     data("https://www.example.com/image.jpg")
-//     *     crossfade(true)
-//     *     target(imageView)
-//     * }
-//     * imageLoader.load(request)
-//     * ```
-//     *
-//     * @see LoadRequestBuilder
-//     * @see ImageLoader.load
-//     */
-//    class LoadRequest internal constructor(
-//        val context: Context,
-//        override val data: Any?,
-//        override val target: Target?,
-//        override val lifecycle: Lifecycle?,
-//        override val crossfadeMillis: Int,
-//        override val keyOverride: String?,
-//        override val listener: Listener?,
-//        override val sizeResolver: SizeResolver?,
-//        override val scale: Scale?,
-//        override val dispatcher: CoroutineDispatcher,
-//        override val transformations: List<Transformation>,
-//        override val bitmapConfig: Bitmap.Config,
-//        override val colorSpace: ColorSpace?,
-//        override val networkCachePolicy: CachePolicy,
-//        override val diskCachePolicy: CachePolicy,
-//        override val memoryCachePolicy: CachePolicy,
-//        override val allowHardware: Boolean,
-//        override val allowRgb565: Boolean,
-//        @DrawableRes internal val placeholderResId: Int,
-//        @DrawableRes internal val errorResId: Int,
-//        internal val placeholderDrawable: Drawable?,
-//        internal val errorDrawable: Drawable?
-//    ) : Request() {
-//
 //        companion object {
 //            /** Create a new [LoadRequest] instance. */
 //            inline operator fun invoke(
@@ -167,61 +137,61 @@ sealed class Request {
 //                builder: LoadRequestBuilder.() -> Unit = {}
 //            ): LoadRequest = LoadRequestBuilder(context, request).apply(builder).build()
 //        }
-//
-//        override val placeholder: Drawable?
-//            get() = context.getDrawable(placeholderDrawable, placeholderResId)
-//
-//        override val error: Drawable?
-//            get() = context.getDrawable(errorDrawable, errorResId)
-//
-//        private fun Context.getDrawable(drawable: Drawable?, @DrawableRes resId: Int): Drawable? {
-//            return drawable ?: if (resId != 0) getDrawableCompat(resId) else null
-//        }
-//
+
+        override val placeholder: Drawable?
+            get() = context.getDrawable(placeholderDrawable, placeholderResId)
+
+        override val error: Drawable?
+            get() = context.getDrawable(errorDrawable, errorResId)
+
+        private fun Context.getDrawable(drawable: Drawable?, @DrawableRes resId: Int): Drawable? {
+            return drawable ?: if (resId != 0) getDrawableCompat(resId) else null
+        }
+
 //        /** Create a new [LoadRequestBuilder] instance using this as a base. */
 //        @JvmOverloads
 //        fun newBuilder(context: Context = this.context) = LoadRequestBuilder(context, this)
-//    }
-//
-//    /**
-//     * A value object that represents a *get* image request.
-//     *
-//     * Instances can be created ad hoc:
-//     * ```
-//     * val drawable = imageLoader.get("https://www.example.com/image.jpg") {
-//     *     size(1080, 1920)
-//     * }
-//     * ```
-//     *
-//     * Or instances can be created separately from the call that executes them:
-//     * ```
-//     * val request = GetRequest(imageLoader.defaults) {
-//     *     data("https://www.example.com/image.jpg")
-//     *     size(1080, 1920)
-//     * }
-//     * imageLoader.get(request)
-//     * ```
-//     *
-//     * @see GetRequestBuilder
-//     * @see ImageLoader.get
-//     */
-//    class GetRequest internal constructor(
-//        override val data: Any,
-//        override val keyOverride: String?,
-//        override val listener: Listener?,
-//        override val sizeResolver: SizeResolver?,
-//        override val scale: Scale?,
-//        override val dispatcher: CoroutineDispatcher,
-//        override val transformations: List<Transformation>,
-//        override val bitmapConfig: Bitmap.Config,
-//        override val colorSpace: ColorSpace?,
-//        override val networkCachePolicy: CachePolicy,
-//        override val diskCachePolicy: CachePolicy,
-//        override val memoryCachePolicy: CachePolicy,
-//        override val allowHardware: Boolean,
-//        override val allowRgb565: Boolean
-//    ) : Request() {
-//
+    }
+
+    /**
+     * A value object that represents a *get* image request.
+     *
+     * Instances can be created ad hoc:
+     * ```
+     * val drawable = imageLoader.get("https://www.example.com/image.jpg") {
+     *     size(1080, 1920)
+     * }
+     * ```
+     *
+     * Or instances can be created separately from the call that executes them:
+     * ```
+     * val request = GetRequest(imageLoader.defaults) {
+     *     data("https://www.example.com/image.jpg")
+     *     size(1080, 1920)
+     * }
+     * imageLoader.get(request)
+     * ```
+     *
+     * @see GetRequestBuilder
+     * @see ImageLoader.get
+     */
+    class GetRequest internal constructor(
+        override val data: Any,
+        override val keyOverride: String?,
+        override val listener: Listener?,
+        override val sizeResolver: SizeResolver?,
+        override val scale: Scale?,
+        override val dispatcher: CoroutineDispatcher,
+        override val transformations: List<Transformation>,
+        override val bitmapConfig: Bitmap.Config,
+        override val colorSpace: ColorSpace?,
+        override val networkCachePolicy: CachePolicy,
+        override val diskCachePolicy: CachePolicy,
+        override val memoryCachePolicy: CachePolicy,
+        override val allowHardware: Boolean,
+        override val allowRgb565: Boolean
+    ) : Request() {
+
 //        companion object {
 //            /** Create a new [GetRequest] instance. */
 //            inline operator fun invoke(
@@ -235,18 +205,18 @@ sealed class Request {
 //                builder: GetRequestBuilder.() -> Unit = {}
 //            ): GetRequest = GetRequestBuilder(request).apply(builder).build()
 //        }
-//
-//        override val target: Target? = null
-//
-//        override val lifecycle: Lifecycle? = null
-//
-//        override val crossfadeMillis: Int = 0
-//
-//        override val placeholder: Drawable? = null
-//
-//        override val error: Drawable? = null
-//
+
+        override val target: Target? = null
+
+        override val lifecycle: Lifecycle? = null
+
+        override val crossfadeMillis: Int = 0
+
+        override val placeholder: Drawable? = null
+
+        override val error: Drawable? = null
+
 //        /** Create a new [GetRequestBuilder] instance using this as a base. */
 //        fun newBuilder() = GetRequestBuilder(this)
-//    }
+    }
 }

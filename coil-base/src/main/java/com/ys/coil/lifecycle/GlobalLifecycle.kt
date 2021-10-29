@@ -2,6 +2,7 @@ package com.ys.coil.lifecycle
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
+import com.ys.coil.request.Request
 
 /**
  * 항상 재개되고 절대 파괴되지 않는 [Lifecycle] 구현.

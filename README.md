@@ -114,3 +114,6 @@
 
 ### MemoryCache
 > 최근에 메모리에 로드된 Bitmap에 대한 LRU 캐시입니다.
+
+### RequestService
+> Request에 대해 작동하는 작업을 처리합니다.
