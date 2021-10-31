@@ -1,7 +1,7 @@
 package com.ys.coil
 
-import android.content.Context
 import android.graphics.drawable.Drawable
+import com.ys.coil.request.LoadRequest
 import com.ys.coil.request.Request
 import com.ys.coil.request.RequestDisposable
 
@@ -40,7 +40,7 @@ interface ImageLoader {
      * @param request 실행할 요청입니다.
      * @return A [RequestDisposable] 요청 상태를 취소하거나 확인하는 데 사용할 수 있습니다.
      */
-    fun load(request: Request.LoadRequest): RequestDisposable
+    fun load(request: LoadRequest): RequestDisposable
 
     /**
      * [request]의 데이터를 로드하고 작업이 완료될 때까지 일시 중단합니다. 로드된 [Drawable]을 반환합니다.

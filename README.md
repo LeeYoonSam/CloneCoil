@@ -123,7 +123,20 @@
 
 
 ## RequestBuilder
-[LoadRequestBuilder] 및 [GetRequestBuilder]의 기본 클래스입니다.
+> [LoadRequestBuilder] 및 [GetRequestBuilder]의 기본 클래스입니다.
 
 ### LoadRequestBuilder
+> [LoadRequest]를 위한 빌더.
+
 ### GetRequestBuilder
+> [GetRequest]를 위한 빌더.
+
+
+## Request
+> 이미지 요청을 나타내는 값 개체입니다.
+
+### GetRequest
+> get 이미지 요청을 나타내는 값 개체입니다.
+
+### LoadRequest
+> load 이미지 요청을 나타내는 값 개체입니다.

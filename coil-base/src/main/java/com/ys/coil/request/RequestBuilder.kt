@@ -1,14 +1,20 @@
 package com.ys.coil.request
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ColorSpace
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.widget.ImageView
+import androidx.annotation.DrawableRes
 import androidx.annotation.Px
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import com.ys.coil.DefaultRequestOptions
 import com.ys.coil.annotation.BuilderMarker
 import com.ys.coil.decode.DataSource
+import com.ys.coil.drawable.CrossfadeDrawable
 import com.ys.coil.size.Scale
 import com.ys.coil.size.Size
 import com.ys.coil.size.SizeResolver
@@ -19,6 +25,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import com.ys.coil.memory.RequestService
 import com.ys.coil.size.PixelSize
 import com.ys.coil.fetch.Fetcher
+import com.ys.coil.target.ImageViewTarget
+import com.ys.coil.target.Target
 
 /** [LoadRequestBuilder] 및 [GetRequestBuilder]의 기본 클래스입니다. */
 @BuilderMarker
@@ -230,5 +238,211 @@ sealed class RequestBuilder<T : RequestBuilder<T>> {
      */
     fun memoryCachePolicy(policy: CachePolicy): T = self {
         this.memoryCachePolicy = policy
+    }
+}
+
+/** [GetRequest]를 위한 빌더. */
+class GetRequestBuilder : RequestBuilder<GetRequestBuilder> {
+
+    constructor(defaults: DefaultRequestOptions) : super(defaults)
+
+    constructor(request: GetRequest) : super(request)
+
+    /**
+     * 로드할 데이터를 설정합니다.
+     */
+    fun data(data: Any) = apply {
+        this.data = data
+    }
+
+    fun build(): GetRequest {
+        return GetRequest(
+            checkNotNull(data) { "data == null" },
+            keyOverride = keyOverride,
+            listener = listener,
+            sizeResolver = sizeResolver,
+            scale = scale,
+            dispatcher = dispatcher,
+            transformations = transformations,
+            bitmapConfig = bitmapConfig,
+            colorSpace = colorSpace,
+            networkCachePolicy = networkCachePolicy,
+            diskCachePolicy = diskCachePolicy,
+            memoryCachePolicy = memoryCachePolicy,
+            allowHardware = allowHardware,
+            allowRgb565 = allowRgb565
+        )
+    }
+}
+
+/** [LoadRequest]를 위한 빌더. */
+class LoadRequestBuilder : RequestBuilder<LoadRequestBuilder> {
+
+    private val context: Context
+
+    private var target: Target?
+    private var lifecycle: Lifecycle?
+    private var crossfadeMillis: Int
+
+    @DrawableRes private var placeholderResId: Int
+    @DrawableRes private var errorResId: Int
+    private var placeholderDrawable: Drawable?
+    private var errorDrawable: Drawable?
+
+    constructor(context: Context, defaults: DefaultRequestOptions) : super(defaults) {
+        this.context = context
+
+        target = null
+        lifecycle = null
+        crossfadeMillis = defaults.crossfadeMillis
+
+        placeholderResId = 0
+        errorResId = 0
+        placeholderDrawable = defaults.placeholder
+        errorDrawable = defaults.error
+    }
+
+    constructor(context: Context, request: LoadRequest) : super(request) {
+        this.context = context
+
+        target = request.target
+        lifecycle = request.lifecycle
+        crossfadeMillis = request.crossfadeMillis
+
+        placeholderResId = request.placeholderResId
+        errorResId = request.errorResId
+        placeholderDrawable = request.placeholderDrawable
+        errorDrawable = request.errorDrawable
+    }
+
+    /**
+     * 로드할 데이터를 설정합니다.
+     */
+    fun data(data: Any?) = apply {
+        this.data = data
+    }
+
+    /**
+     * [imageView]를 [Target]으로 설정하는 편리한 기능입니다.
+     */
+    fun target(imageView: ImageView) = apply {
+        target(ImageViewTarget(imageView))
+    }
+
+    /**
+     * [Target]을 생성하고 설정할 수 있는 편리한 기능입니다.
+     */
+    inline fun target(
+        crossinline onStart: (placeholder: Drawable?) -> Unit = {},
+        crossinline onError: (error: Drawable?) -> Unit = {},
+        crossinline onSuccess: (result: Drawable) -> Unit = {}
+    ) = apply {
+        target(object : Target {
+            override fun onStart(placeholder: Drawable?) = onStart(placeholder)
+            override fun onError(error: Drawable?) = onError(error)
+            override fun onSuccess(result: Drawable) = onSuccess(result)
+        })
+    }
+
+    /**
+     * [Target]을 설정합니다. 대상이 null인 경우 이 요청은 이미지를 메모리에 미리 로드합니다.
+     */
+    fun target(target: Target?) = apply {
+        this.target = target
+    }
+
+    /**
+     * 이 요청에 대해 [Lifecycle]을 설정합니다.
+     */
+    fun lifecycle(owner: LifecycleOwner?) = apply {
+        lifecycle(owner?.lifecycle)
+    }
+
+    /**
+     * 이 요청에 대해 [Lifecycle]을 설정합니다.
+     *
+     * 수명 주기가 [Lifecycle.State.STARTED] 이상이 아닌 동안 요청이 대기열에 있습니다.
+     * 수명 주기가 [Lifecycle.State.DESTROYED]에 도달하면 요청이 취소됩니다.
+     *
+     * 이것이 설정되지 않으면 Coil은 이 요청에 대한 수명 주기를 찾으려고 시도합니다.
+     * [RequestService.lifecycleInfo]의 로직을 사용합니다.
+     */
+    fun lifecycle(lifecycle: Lifecycle?) = apply {
+        this.lifecycle = lifecycle
+    }
+
+    /**
+     * 참조: [ImageLoaderBuilder.crossfade]
+     */
+    fun crossfade(enable: Boolean) = apply {
+        this.crossfadeMillis = if (enable) CrossfadeDrawable.DEFAULT_DURATION else 0
+    }
+
+    /**
+     * 참조: [ImageLoaderBuilder.crossfade]
+     */
+    fun crossfade(durationMillis: Int) = apply {
+        require(durationMillis >= 0) { "Duration must be >= 0." }
+        this.crossfadeMillis = durationMillis
+    }
+
+    /**
+     * 요청이 시작될 때 사용할 placeholder에 드로어블을 설정합니다.
+     */
+    fun placeholder(@DrawableRes drawableResId: Int) = apply {
+        this.placeholderResId = drawableResId
+        this.placeholderDrawable = null
+    }
+
+    /**
+     * 요청이 시작될 때 사용할 placeholder에 드로어블을 설정합니다.
+     */
+    fun placeholder(drawable: Drawable?) = apply {
+        this.placeholderDrawable = drawable
+        this.placeholderResId = 0
+    }
+
+    /**
+     * 요청이 실패할 경우 사용할 오류 드로어블을 설정합니다.
+     */
+    fun error(@DrawableRes drawableResId: Int) = apply {
+        this.errorResId = drawableResId
+        this.errorDrawable = null
+    }
+
+    /**
+     * 요청이 실패할 경우 사용할 오류 드로어블을 설정합니다.
+     */
+    fun error(drawable: Drawable?) = apply {
+        this.errorDrawable = drawable
+        this.errorResId = 0
+    }
+
+    /** 새 [LoadRequest] 인스턴스를 만듭니다. */
+    fun build(): LoadRequest {
+        return LoadRequest(
+            context = context,
+            data = data,
+            target = target,
+            lifecycle = lifecycle,
+            crossfadeMillis = crossfadeMillis,
+            keyOverride = keyOverride,
+            listener = listener,
+            sizeResolver = sizeResolver,
+            scale = scale,
+            dispatcher = dispatcher,
+            transformations = transformations,
+            bitmapConfig = bitmapConfig,
+            colorSpace = colorSpace,
+            networkCachePolicy = networkCachePolicy,
+            diskCachePolicy = diskCachePolicy,
+            memoryCachePolicy = memoryCachePolicy,
+            allowHardware = allowHardware,
+            allowRgb565 = allowRgb565,
+            placeholderResId = placeholderResId,
+            errorResId = errorResId,
+            placeholderDrawable = placeholderDrawable,
+            errorDrawable = errorDrawable
+        )
     }
 }

@@ -10,6 +10,8 @@ import com.ys.coil.decode.Options
 import com.ys.coil.lifecycle.GlobalLifecycle
 import com.ys.coil.lifecycle.LifecycleCoroutineDispatcher
 import com.ys.coil.request.CachePolicy
+import com.ys.coil.request.GetRequest
+import com.ys.coil.request.LoadRequest
 import com.ys.coil.request.Request
 import com.ys.coil.size.DisplaySizeResolver
 import com.ys.coil.size.Scale
@@ -30,8 +32,8 @@ internal class RequestService {
     @MainThread
     fun lifecycleInfo(request: Request): LifecycleInfo {
         return when (request) {
-            is Request.GetRequest -> LifecycleInfo.GLOBAL
-            is Request.LoadRequest -> {
+            is GetRequest -> LifecycleInfo.GLOBAL
+            is LoadRequest -> {
                 // 이 요청에 대한 수명 주기를 찾습니다.
                 val lifecycle = request.getLifecycle()
                 return if (lifecycle != null) {
@@ -100,7 +102,7 @@ internal class RequestService {
         )
     }
 
-    private fun Request.LoadRequest.getLifecycle(): Lifecycle? {
+    private fun LoadRequest.getLifecycle(): Lifecycle? {
         return when {
             lifecycle != null -> lifecycle
             target is ViewTarget<*> -> target.view.context.getLifecycle()
