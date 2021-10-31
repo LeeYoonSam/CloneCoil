@@ -13,7 +13,7 @@ import com.ys.coil.target.ImageViewTarget
 import com.ys.coil.target.PoolableViewTarget
 
 /**
- * Wrap a [Target] to support [Bitmap] pooling.
+ * [Target]을 래핑하여 [Bitmap] 풀링을 지원합니다.
  *
  * @see DelegateService
  */
