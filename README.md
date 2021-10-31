@@ -120,3 +120,10 @@
 
 ### DelegateService
 > DelegateService는 Target을 래핑하여 Bitmap 풀링을 지원하고 Request를 래핑하여 수명 주기를 관리합니다.
+
+
+## RequestBuilder
+[LoadRequestBuilder] 및 [GetRequestBuilder]의 기본 클래스입니다.
+
+### LoadRequestBuilder
+### GetRequestBuilder

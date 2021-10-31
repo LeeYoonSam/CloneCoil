@@ -1,5 +1,7 @@
 package com.ys.coil.size
 
+import com.ys.coil.request.RequestBuilder
+
 /**
  * 이미지 요청 대상의 크기를 측정하기 위한 인터페이스
  *

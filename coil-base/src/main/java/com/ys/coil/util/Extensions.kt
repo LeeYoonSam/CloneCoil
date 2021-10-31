@@ -102,3 +102,12 @@ internal val ImageView.scale: Scale
         ImageView.ScaleType.CENTER_INSIDE -> Scale.FIT
         else -> Scale.FILL
     }
+
+/** Kotlin이 지원하지 않는 self type 구현 */
+@PublishedApi
+@Suppress("UNCHECKED_CAST")
+internal inline fun <T> Any.self(block: T.() -> Unit): T {
+    this as T
+    block()
+    return this
+}
