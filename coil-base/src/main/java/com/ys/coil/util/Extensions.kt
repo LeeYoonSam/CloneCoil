@@ -5,9 +5,11 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.widget.ImageView
 import androidx.core.graphics.drawable.toDrawable
 import com.ys.coil.R
 import com.ys.coil.memory.ViewTargetRequestManager
+import com.ys.coil.size.Scale
 import com.ys.coil.target.ViewTarget
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Call
@@ -91,3 +93,12 @@ internal val ViewTarget<*>.requestManager: ViewTargetRequestManager
     }
 
 internal fun ViewTarget<*>.cancel() = requestManager.setRequest(null)
+
+internal val ImageView.scale: Scale
+    get() = when (scaleType) {
+        ImageView.ScaleType.FIT_START,
+        ImageView.ScaleType.FIT_CENTER,
+        ImageView.ScaleType.FIT_END,
+        ImageView.ScaleType.CENTER_INSIDE -> Scale.FIT
+        else -> Scale.FILL
+    }

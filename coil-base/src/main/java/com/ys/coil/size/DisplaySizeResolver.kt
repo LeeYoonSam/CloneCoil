@@ -1,6 +1,7 @@
 package com.ys.coil.size
 
 import android.content.Context
+import com.ys.coil.request.Request
 
 /**
  * [Target]을 디스플레이 크기로 제한하는 [SizeResolver]입니다.
