@@ -1,5 +1,7 @@
 package com.ys.coil.map
 
+import com.ys.coil.fetch.Fetcher
+
 /**
  * [T] 유형의 데이터를 [V]로 변환하는 인터페이스입니다.
  *

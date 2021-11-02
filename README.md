@@ -140,3 +140,7 @@
 
 ### LoadRequest
 > load 이미지 요청을 나타내는 값 개체입니다.
+
+## ComponentRegistry
+> [ImageLoader]가 이미지 요청을 이행하기 위해 사용하는 모든 구성 요소에 대한 레지스트리.\
+  이 클래스를 사용하여 사용자 정의 [Mapper], [MeasuredMapper], [Fetcher] 및 [Decoder]에 대한 지원을 등록합니다.

@@ -94,6 +94,10 @@ internal val ViewTarget<*>.requestManager: ViewTargetRequestManager
 
 internal fun ViewTarget<*>.cancel() = requestManager.setRequest(null)
 
+internal typealias MultiMutableList<R, T> = MutableList<Pair<R, T>>
+
+internal typealias MultiList<R, T> = List<Pair<R, T>>
+
 internal val ImageView.scale: Scale
     get() = when (scaleType) {
         ImageView.ScaleType.FIT_START,
