@@ -1,6 +1,7 @@
 package com.ys.coil
 
 import android.graphics.drawable.Drawable
+import com.ys.coil.request.GetRequest
 import com.ys.coil.request.LoadRequest
 import com.ys.coil.request.Request
 import com.ys.coil.request.RequestDisposable
@@ -48,7 +49,7 @@ interface ImageLoader {
      * @param request 실행할 요청입니다.
      * @return The [Drawable] 결과
      */
-//    suspend fun get(request: GetRequest): Drawable
+    suspend fun get(request: GetRequest): Drawable
 
     /**
      * 이 이미지 로더의 메모리 캐시와 비트맵 풀을 완전히 지웁니다.
