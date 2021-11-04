@@ -147,3 +147,8 @@
 
 ## ImageLoader API
 > ImageLoader 의 타입을 안전하게 불러오고 확장함수 컬렉션을 정의 합니다.
+
+## ImageLoaderBuilder
+> [ImageLoader]용 빌더.
+
+- OkHttpClient, ComponentRegistry, MemoryPercentage, BitmapPoolPercentage, RequestOption을 세팅하고 ImageLoader 객체를 만듭니다.

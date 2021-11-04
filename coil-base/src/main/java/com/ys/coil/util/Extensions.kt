@@ -1,10 +1,12 @@
 package com.ys.coil.util
 
+import android.app.ActivityManager
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.os.StatFs
 import android.widget.ImageView
 import androidx.core.graphics.drawable.toDrawable
 import com.ys.coil.R
@@ -38,6 +40,10 @@ internal inline fun <T> MutableList<T>?.orEmpty(): MutableList<T> = this ?: muta
 
 internal inline fun <T> MutableList<T>.removeLast(): T? = if (isNotEmpty()) removeAt(lastIndex) else null
 
+internal inline fun ActivityManager.isLowRawDeviceCompat(): Boolean {
+    return Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT || isLowRamDevice
+}
+
 internal inline fun Bitmap.toDrawable(context: Context): BitmapDrawable = toDrawable(context.resources)
 
 /**
@@ -55,6 +61,16 @@ internal fun Bitmap.getAllocationByteCountCompat(): Int {
     } catch (ignored: Exception) {
         Utils.calculateAllocationByteCount(width, height, config)
     }
+}
+
+@Suppress("DEPRECATION")
+internal inline fun StatFs.getBlockCountCompat(): Long {
+    return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) blockCountLong else blockCount.toLong()
+}
+
+@Suppress("DEPRECATION")
+internal inline fun StatFs.getBlockSizeCompat(): Long {
+    return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) blockSizeLong else blockSize.toLong()
 }
 
 internal val Drawable.width: Int
