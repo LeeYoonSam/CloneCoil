@@ -87,6 +87,9 @@
 - GroupedLinkedMap 의 키를 width, height, Bitmap.Config 3가지를 사용
 - width, height, Bitmap.Config 3가지가 다르면 다른 비트맵으로 인지
 
+## RealBitmapPool
+> [BitmapPoolStrategy]를 사용하여 [Bitmap]을 버킷하는 [BitmapPool] 구현, 그런 다음 LRU 축출 정책을 사용하여 최소에서 [Bitmap]을 축출합니다.\
+  주어진 최대 크기 제한 아래로 풀을 유지하기 위해 최근에 사용한 버킷.
 
 ## Transformation
 > 이미지의 픽셀 데이터를 변환하기 위한 인터페이스입니다.

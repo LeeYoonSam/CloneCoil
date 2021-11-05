@@ -7,6 +7,11 @@ import android.graphics.drawable.Drawable
 import com.ys.coil.request.GetRequest
 import com.ys.coil.request.LoadRequest
 import com.ys.coil.request.RequestDisposable
+import com.ys.coil.util.log
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import okhttp3.OkHttpClient
 
 internal class RealImageLoader(
@@ -17,6 +22,14 @@ internal class RealImageLoader(
     okHttpClient: OkHttpClient,
     registry: ComponentRegistry
 ) : ImageLoader, ComponentCallbacks {
+
+    companion object {
+        private const val TAG = "RealImageLoader"
+    }
+
+    private val loaderScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable -> log(TAG, throwable) }
+
     override fun load(request: LoadRequest): RequestDisposable {
         TODO("Not yet implemented")
     }

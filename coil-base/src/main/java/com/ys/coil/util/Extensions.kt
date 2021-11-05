@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.StatFs
 import android.widget.ImageView
+import androidx.collection.arraySetOf
 import androidx.core.graphics.drawable.toDrawable
 import com.ys.coil.R
 import com.ys.coil.memory.ViewTargetRequestManager
@@ -39,6 +40,9 @@ internal fun Bitmap.Config?.getBytesPerPixel(): Int {
 internal inline fun <T> MutableList<T>?.orEmpty(): MutableList<T> = this ?: mutableListOf()
 
 internal inline fun <T> MutableList<T>.removeLast(): T? = if (isNotEmpty()) removeAt(lastIndex) else null
+
+internal inline fun <T> arraySetOf(builder: MutableSet<T>.() -> Unit): Set<T> = arraySetOf<T>()
+    .apply(builder)
 
 internal inline fun ActivityManager.isLowRawDeviceCompat(): Boolean {
     return Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT || isLowRamDevice
