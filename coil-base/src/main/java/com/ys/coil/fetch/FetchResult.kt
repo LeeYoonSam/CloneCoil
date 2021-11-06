@@ -3,6 +3,7 @@ package com.ys.coil.fetch
 import android.graphics.drawable.Drawable
 import com.ys.coil.decode.DataSource
 import okio.BufferedSource
+import com.ys.coil.decode.Decoder
 
 /**
  * [Fetcher.fetch]의 결과.

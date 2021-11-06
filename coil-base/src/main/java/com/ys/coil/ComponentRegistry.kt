@@ -7,6 +7,7 @@ import com.ys.coil.map.Mapper
 import com.ys.coil.map.MeasuredMapper
 import com.ys.coil.util.MultiList
 import com.ys.coil.util.MultiMutableList
+import okio.BufferedSource
 
 /**
  * [ImageLoader]가 이미지 요청을 이행하기 위해 사용하는 모든 구성 요소에 대한 레지스트리.
@@ -41,6 +42,42 @@ class ComponentRegistry private constructor(
             builder: Builder.() -> Unit = {}
         ): ComponentRegistry = Builder(registry).apply(builder).build()
     }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Any> getMapper(data: T): Mapper<T, *>? {
+        val result = mappers.find { (type, converter) ->
+            type.isAssignableFrom(data::class.java) && (converter as Mapper<Any, *>).handles(data)
+        }
+        return result?.second as Mapper<T, *>?
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Any> getMeasuredMapper(data: T): MeasuredMapper<T, *>? {
+        val result = measuredMappers.find { (type, converter) ->
+            type.isAssignableFrom(data::class.java) && (converter as MeasuredMapper<Any, *>).handles(data)
+        }
+        return result?.second as MeasuredMapper<T, *>?
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Any> requireFetcher(data: T): Fetcher<T> {
+        val result = fetchers.find { (type, loader) ->
+            type.isAssignableFrom(data::class.java) && (loader as Fetcher<Any>).handles(data)
+        }
+        checkNotNull(result) { "Unable to fetch data. No fetcher supports: $data" }
+        return result.second as Fetcher<T>
+    }
+
+    fun <T : Any> requireDecoder(
+        data: T,
+        source: BufferedSource,
+        mimeType: String?
+    ): Decoder {
+        val decoder = decoders.find { it.handles(source, mimeType) }
+        return checkNotNull(decoder) { "Unable to decode data. No decoder supports: $data" }
+    }
+
+    fun newBuilder(): Builder = Builder(this)
 
     @BuilderMarker
     class Builder {

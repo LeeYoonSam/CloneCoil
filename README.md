@@ -155,3 +155,6 @@
 > [ImageLoader]용 빌더.
 
 - OkHttpClient, ComponentRegistry, MemoryPercentage, BitmapPoolPercentage, RequestOption을 세팅하고 ImageLoader 객체를 만듭니다.
+
+## RealImageLoader
+> 실제 사용할 이미지 로더

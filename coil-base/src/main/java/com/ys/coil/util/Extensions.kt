@@ -11,6 +11,8 @@ import android.widget.ImageView
 import androidx.collection.arraySetOf
 import androidx.core.graphics.drawable.toDrawable
 import com.ys.coil.R
+import com.ys.coil.decode.DataSource
+import com.ys.coil.memory.MemoryCache
 import com.ys.coil.memory.ViewTargetRequestManager
 import com.ys.coil.size.Scale
 import com.ys.coil.target.ViewTarget
@@ -91,6 +93,23 @@ internal fun Closeable.closeQuietly() {
     } catch (ignored: Exception) {}
 }
 
+internal fun MemoryCache.getValue(key: String?): MemoryCache.Value? {
+    return key?.let { get(it) }
+}
+
+internal fun MemoryCache.putValue(key: String?, value: Drawable, isSampled: Boolean) {
+    if (key != null) {
+        val bitmap = (value as? BitmapDrawable)?.bitmap
+        if (bitmap != null) {
+            set(key, bitmap, isSampled)
+        }
+    }
+}
+
+internal inline fun <T> takeIf(take: Boolean, factory: () -> T): T? {
+    return if (take) factory() else null
+}
+
 /** null 및 [Bitmap.Config.HARDWARE] 구성을 [Bitmap.Config.ARGB_8888]로 변환합니다. */
 internal fun Bitmap.Config?.normalize(): Bitmap.Config {
     return if (this == null || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && this == Bitmap.Config.HARDWARE)) {
@@ -117,6 +136,13 @@ internal fun ViewTarget<*>.cancel() = requestManager.setRequest(null)
 internal typealias MultiMutableList<R, T> = MutableList<Pair<R, T>>
 
 internal typealias MultiList<R, T> = List<Pair<R, T>>
+
+internal val DataSource.emoji: String
+    get() = when (this) {
+        DataSource.MEMORY -> Emoji.BRAIN
+        DataSource.DISK -> Emoji.FLOPPY
+        DataSource.NETWORK -> Emoji.CLOUD
+    }
 
 internal val ImageView.scale: Scale
     get() = when (scaleType) {
