@@ -5,7 +5,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.ys.coil.ImageLoader
-import com.ys.coil.request.Request
+import com.ys.coil.request.LoadRequest
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 
@@ -60,7 +60,7 @@ internal class BaseRequestDelegate(
  */
 internal class ViewTargetRequestDelegate(
     private val loader: ImageLoader,
-    internal val request: Request.LoadRequest,
+    internal val request: LoadRequest,
     private val target: TargetDelegate,
     private val lifecycle: Lifecycle,
     private val dispatcher: CoroutineDispatcher,
