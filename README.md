@@ -166,7 +166,7 @@
 > Robolectric은 Android에 빠르고 안정적인 단위 테스트를 제공하는 프레임워크입니다. \
   테스트는 몇 초 만에 워크스테이션의 JVM 내에서 실행됩니다.
 
-## Robolectric - Shadow
+## Robolectric - [Shadow](http://robolectric.org/extending/)
 > Robolectric은 실제 Android 프레임워크 코드를 포함하는 런타임 환경을 생성하여 작동합니다. \
   즉, 테스트 또는 테스트 중인 코드가 Android 프레임워크를 호출할 때 대부분의 경우 실제 장치에서와 같이 동일한 코드가 실행되므로 보다 현실적인 경험을 얻을 수 있습니다.
 
