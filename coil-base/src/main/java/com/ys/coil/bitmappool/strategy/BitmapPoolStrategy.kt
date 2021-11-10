@@ -20,7 +20,7 @@ internal interface BitmapPoolStrategy {
 
 
     /**
-     * LRU 캐시에 [Bitmap]을 저장합니다.ㄱㄷㅁ
+     * LRU 캐시에 [Bitmap]을 저장합니다.
      */
     fun put(bitmap: Bitmap)
 

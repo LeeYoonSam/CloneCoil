@@ -18,6 +18,19 @@ android {
   libraryVariants.all {
     generateBuildConfigProvider?.configure { enabled = false }
   }
+  sourceSets {
+    getByName("test").apply {
+      assets.srcDirs("src/sharedTest/assets")
+      java.srcDirs("src/sharedTest/java")
+    }
+    getByName("androidTest").apply {
+      assets.srcDirs("src/sharedTest/assets")
+      java.srcDirs("src/sharedTest/java")
+    }
+  }
+  testOptions {
+    unitTests.isIncludeAndroidResources = true
+  }
   testOptions {
     unitTests.isIncludeAndroidResources = true
     unitTests.isReturnDefaultValues = true

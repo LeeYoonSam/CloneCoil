@@ -5,7 +5,7 @@ import com.ys.coil.bitmappool.strategy.BitmapPoolStrategy
 
 class FakeBitmapPoolStrategy : BitmapPoolStrategy {
 
-    private val bitmaps = ArrayDeque<Bitmap>()
+    val bitmaps = ArrayDeque<Bitmap>()
 
     var numRemoves = 0
     var numPuts = 0
