@@ -7,4 +7,4 @@ import okhttp3.Response
  *
  * @see HttpUrlFetcher
  */
-class HttpException(response: Response) : RuntimeException("HTTP ${response.code()}: ${response.message()}")
+class HttpException(response: Response) : RuntimeException("HTTP ${response.code}: ${response.message}")

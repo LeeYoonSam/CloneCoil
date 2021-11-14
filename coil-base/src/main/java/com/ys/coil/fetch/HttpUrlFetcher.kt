@@ -55,12 +55,12 @@ class HttpUrlFetcher(
             throw HttpException(response)
         }
 
-        val body = checkNotNull(response.body()) { "Null response body!" }
+        val body = checkNotNull(response.body) { "Null response body!" }
 
         return SourceResult(
             source = body.source(),
             mimeType = body.contentType()?.toString(),
-            dataSource = if (response.cacheResponse() != null) DataSource.DISK else DataSource.NETWORK
+            dataSource = if (response.cacheResponse != null) DataSource.DISK else DataSource.NETWORK
         )
     }
 }

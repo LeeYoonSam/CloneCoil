@@ -20,7 +20,7 @@ object Library {
 
     const val MATERIAL = "com.google.android.material:material:1.4.0"
 
-    private const val OKHTTP_VERSION = "3.12.3"
+    private const val OKHTTP_VERSION = "4.9.2"
     const val OKHTTP = "com.squareup.okhttp3:okhttp:$OKHTTP_VERSION"
 
     const val OKIO = "com.squareup.okio:okio:2.3.0"
@@ -32,7 +32,6 @@ object Library {
     const val ANDROIDX_TEST_JUNIT = "androidx.test.ext:junit-ktx:1.1.3"
     const val ANDROIDX_TEST_RULES = "androidx.test:rules:1.2.0"
     const val ANDROIDX_TEST_RUNNER = "androidx.test:runner:1.4.0"
-
     const val OKHTTP_MOCK_WEB_SERVER = "com.squareup.okhttp3:mockwebserver:$OKHTTP_VERSION"
 
     const val ROBOLECTRIC = "org.robolectric:robolectric:4.6.1"
