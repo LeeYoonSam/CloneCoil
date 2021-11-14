@@ -35,7 +35,7 @@ interface BitmapPool {
     fun getOrNull(@Px width: Int, @Px height: Int, config: Bitmap.Config): Bitmap?
 
     /**
-     * 반환된 [Bitmap]이 지워지지 **않을 수 있고** 임의의 데이터가 포함될 수 있다는 점을 제외하고 [get]과 동일합니다.
+     * 반환된 [Bitmap]이 **지워지지 않을 수 있고** 임의의 데이터가 포함될 수 있다는 점을 제외하고 [get]과 동일합니다.
      *
      * 요청된 속성을 가진 비트맵이 풀에 없으면 새 비트맵이 할당됩니다.
      *
