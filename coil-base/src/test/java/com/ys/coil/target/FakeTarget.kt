@@ -16,6 +16,6 @@ class FakeTarget : Target {
     }
 
     override fun onError(error: Drawable?) {
-        this.error = false
+        this.error = true
     }
 }

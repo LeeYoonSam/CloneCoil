@@ -1,5 +1,6 @@
 package com.ys.coil
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import com.ys.coil.request.GetRequest
 import com.ys.coil.request.LoadRequest
@@ -22,10 +23,10 @@ interface ImageLoader {
          * }
          * ```
          */
-//        inline operator fun invoke(
-//            context: Context,
-//            builder: ImageLoaderBuilder.() -> Unit = {}
-//        ): ImageLoader = ImageLoaderBuilder(context).apply(builder).build()
+        inline operator fun invoke(
+            context: Context,
+            builder: ImageLoaderBuilder.() -> Unit = {}
+        ): ImageLoader = ImageLoaderBuilder(context).apply(builder).build()
     }
 
     /**
