@@ -3,10 +3,10 @@ dependencyResolutionManagement {
   repositories {
     google()
     mavenCentral()
-    jcenter() // Warning: this repository is going to shut down soon
   }
 }
 
 rootProject.name = "CloneCoil"
-include(":app")
+include(":coil-sample")
 include(":coil-base")
+include(":coil-default")

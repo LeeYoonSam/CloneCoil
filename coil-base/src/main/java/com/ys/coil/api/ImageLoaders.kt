@@ -143,8 +143,8 @@ suspend inline fun ImageLoader.getAny(
 
 // region Request Creation
 
-inline fun ImageLoader.newLoadBuilder(context: Context) = LoadRequestBuilder(context, defaults)
+fun ImageLoader.newLoadBuilder(context: Context) = LoadRequestBuilder(context, defaults)
 
-inline fun ImageLoader.newGetBuilder() = GetRequestBuilder(defaults)
+fun ImageLoader.newGetBuilder() = GetRequestBuilder(defaults)
 
 // endregion
