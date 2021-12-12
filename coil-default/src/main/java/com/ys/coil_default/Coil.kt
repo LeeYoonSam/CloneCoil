@@ -36,7 +36,7 @@ object Coil {
 	 * [factory]는 한 번만 호출되도록 보장됩니다. 이것은 기본 [ImageLoader]의 지연 인스턴스화를 가능하게 합니다.
 	 */
 	@JvmStatic
-	private fun setDefaultImageLoader(factory: () -> ImageLoader) {
+	fun setDefaultImageLoader(factory: () -> ImageLoader) {
 		imageLoader?.shutdown()
 		imageLoaderFactory = factory
 		imageLoader = null

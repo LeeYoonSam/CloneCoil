@@ -5,6 +5,8 @@
       <map>
         <entry key="../../../../../layout/custom_preview.xml" value="0.41944444444444445" />
         <entry key="coil-base/src/androidTest/res/drawable/ic_android.xml" value="0.4361111111111111" />
+        <entry key="coil-sample/src/main/res/layout/activity_main.xml" value="0.5046875" />
+        <entry key="coil-sample/src/main/res/layout/list_item.xml" value="0.5046875" />
       </map>
     </option>
   </component>
