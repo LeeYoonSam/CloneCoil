@@ -8,7 +8,7 @@ import org.robolectric.Shadows
 
 const val DEFAULT_BITMAP_SIZE = 40000L // 4 * 100 * 100
 
-fun  createBitmap(
+fun createBitmap(
     width: Int = 100,
     height: Int = 100,
     config: Bitmap.Config = Bitmap.Config.ARGB_8888,
