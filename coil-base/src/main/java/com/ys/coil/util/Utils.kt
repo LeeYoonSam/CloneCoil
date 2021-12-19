@@ -9,6 +9,8 @@ import android.os.StatFs
 import androidx.annotation.Px
 import java.io.File
 
+internal val Context.safeCacheDir: File get() = cacheDir.apply { mkdirs() }
+
 internal object Utils {
     private const val CACHE_DIRECTORY_NAME = "image_cache"
 
