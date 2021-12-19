@@ -15,31 +15,18 @@ import com.ys.coil.decode.DataSource
 import com.ys.coil.decode.DrawableDecoderService
 import com.ys.coil.decode.EmptyDecoder
 import com.ys.coil.fetch.*
-import com.ys.coil.fetch.BitmapFetcher
-import com.ys.coil.fetch.DrawableFetcher
-import com.ys.coil.fetch.ResourceFetcher
 import com.ys.coil.map.FileMapper
 import com.ys.coil.map.HttpUriMapper
 import com.ys.coil.map.StringMapper
 import com.ys.coil.memory.*
-import com.ys.coil.memory.BitmapReferenceCounter
-import com.ys.coil.memory.DelegateService
-import com.ys.coil.memory.MemoryCache
-import com.ys.coil.memory.RequestService
 import com.ys.coil.network.NetworkObserver
 import com.ys.coil.request.*
-import com.ys.coil.request.EmptyRequestDisposable
-import com.ys.coil.request.ViewTargetRequestDisposable
 import com.ys.coil.size.PixelSize
 import com.ys.coil.size.Size
 import com.ys.coil.size.SizeResolver
 import com.ys.coil.target.ViewTarget
 import com.ys.coil.transform.Transformation
 import com.ys.coil.util.*
-import com.ys.coil.util.cancel
-import com.ys.coil.util.getValue
-import com.ys.coil.util.log
-import com.ys.coil.util.takeIf
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 
@@ -315,6 +302,36 @@ internal class RealImageLoader(
                 )
             }
             is DrawableResult -> fetchResult
+            is SourceResultNew -> {
+                val decodeResult = try {
+                    // 취소되었는지 확인하세요.
+                    ensureActive()
+
+                    // 관련 디코더를 찾으십시오.
+                    val decoder = if (request.isDiskPreload()) {
+                        // 데이터를 미리 로드하고 메모리 캐시에 쓰는 것이 비활성화된 경우 결과 디코딩을 건너뜁니다.
+                        // 대신 소스를 소진하고 빈 결과를 반환합니다.
+                        EmptyDecoder
+                    } else {
+                        registry.requireDecoder(data, fetchResult.source.source(), fetchResult.mimeType)
+                    }
+
+                    // 스트림을 디코딩합니다.
+                    decoder.decode(bitmapPool, fetchResult.source.source(), size, options)
+                } catch (rethrown: Exception) {
+                    // 참고: 포착되지 않은 예외가 있는 경우에만 스트림을 자동으로 닫습니다.
+                    // 이것은 사용자 정의 디코더가 드로어블을 반환한 후에도 소스를 계속 읽을 수 있도록 합니다.
+                    fetchResult.source.closeQuietly()
+                    throw rethrown
+                }
+
+                // 가져오기 및 디코딩 작업 결과를 결합합니다.
+                DrawableResult(
+                    drawable = decodeResult.drawable,
+                    isSampled = decodeResult.isSampled,
+                    dataSource = fetchResult.dataSource
+                )
+            }
         }
 
         // 취소되었는지 확인하세요.

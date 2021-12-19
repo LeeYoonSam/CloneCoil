@@ -1,7 +1,6 @@
 package com.ys.coil.util
 
 import android.app.ActivityManager
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -9,7 +8,6 @@ import android.os.Build
 import android.os.StatFs
 import android.widget.ImageView
 import androidx.collection.arraySetOf
-import androidx.core.graphics.drawable.toDrawable
 import com.ys.coil.R
 import com.ys.coil.decode.DataSource
 import com.ys.coil.memory.MemoryCache
@@ -49,8 +47,6 @@ internal inline fun <T> arraySetOf(builder: MutableSet<T>.() -> Unit): Set<T> = 
 internal inline fun ActivityManager.isLowRawDeviceCompat(): Boolean {
     return Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT || isLowRamDevice
 }
-
-internal inline fun Bitmap.toDrawable(context: Context): BitmapDrawable = toDrawable(context.resources)
 
 /**
  * 주어진 [Bitmap]의 메모리 크기를 바이트 단위로 반환합니다.
@@ -139,6 +135,7 @@ internal typealias MultiList<R, T> = List<Pair<R, T>>
 
 internal val DataSource.emoji: String
     get() = when (this) {
+        DataSource.MEMORY_CACHE,
         DataSource.MEMORY -> Emoji.BRAIN
         DataSource.DISK -> Emoji.FLOPPY
         DataSource.NETWORK -> Emoji.CLOUD

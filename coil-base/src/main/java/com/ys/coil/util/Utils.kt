@@ -4,10 +4,31 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.graphics.Bitmap
+import android.graphics.ColorSpace
 import android.os.Build
+import android.os.Looper
 import android.os.StatFs
 import androidx.annotation.Px
+import com.ys.coil.DefaultRequestOptions
+import com.ys.coil.request.Parameters
+import okhttp3.Headers
 import java.io.File
+
+/** Required for compatibility with API 25 and below. */
+internal val NULL_COLOR_SPACE: ColorSpace? = null
+
+internal val DEFAULT_REQUEST_OPTIONS = DefaultRequestOptions()
+
+internal val EMPTY_HEADERS = Headers.Builder().build()
+
+internal fun Headers?.orEmpty() = this ?: EMPTY_HEADERS
+
+internal fun Parameters?.orEmpty() = this ?: Parameters.EMPTY
+
+internal fun isMainThread() = Looper.myLooper() == Looper.getMainLooper()
+
+internal inline val Any.identityHashCode: Int
+    get() = System.identityHashCode(this)
 
 internal val Context.safeCacheDir: File get() = cacheDir.apply { mkdirs() }
 
