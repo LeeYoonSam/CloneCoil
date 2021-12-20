@@ -8,6 +8,7 @@ import com.ys.coil.ImageLoader
 import com.ys.coil.decode.DataSource.DISK
 import com.ys.coil.fetch.SourceResultNew
 import com.ys.coil.request.Options
+import com.ys.coil.size.OriginalSize
 import com.ys.coil.size.PixelSize
 import com.ys.coil.size.Scale
 import com.ys.coil.size.Size
@@ -52,6 +53,25 @@ class BitmapFactoryDecoderNewTest {
 				size = PixelSize(100, 100)
 			)
 		}
+	}
+
+	@Test
+	fun resultIsSampledIfGreaterThanHalfSize() {
+		val (drawable, isSampled) = decode(
+			assetName = "normal.jpg",
+			size = PixelSize(600, 600)
+		)
+
+		assertTrue(isSampled)
+		assertTrue(drawable is BitmapDrawable)
+		assertEquals(PixelSize(600, 750), drawable.bitmap.size)
+	}
+
+	@Test
+	fun originalSizeDimensionsAreResolvedCorrectly() {
+		val size = OriginalSize
+		val normal = decodeBitmap("normal.jpg", size)
+		assertEquals(PixelSize(1080, 1350), normal.size)
 	}
 
 	private fun decodeBitmap(assetName: String, size: Size): Bitmap =
