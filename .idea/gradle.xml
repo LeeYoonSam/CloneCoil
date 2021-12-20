@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/coil-default" />
             <option value="$PROJECT_DIR$/coil-gif" />
             <option value="$PROJECT_DIR$/coil-sample" />
+            <option value="$PROJECT_DIR$/coil-test" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

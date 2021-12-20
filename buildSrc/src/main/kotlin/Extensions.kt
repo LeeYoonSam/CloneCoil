@@ -2,6 +2,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.project
 import kotlin.math.pow
 
 val Project.minSdk: Int
@@ -57,6 +58,8 @@ fun DependencyHandler.androidTestImplementation(dependencyNotation: Any): Depend
 }
 
 fun DependencyHandler.addTestDependencies(kotlinVersion: String) {
+    testImplementation(project(":coil-test"))
+
     testImplementation(kotlin("test-junit", kotlinVersion))
     testImplementation(Library.KOTLINX_COROUTINES_TEST)
 

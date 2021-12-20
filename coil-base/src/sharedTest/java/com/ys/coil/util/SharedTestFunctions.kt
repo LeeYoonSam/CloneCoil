@@ -4,7 +4,12 @@ import android.content.Context
 import android.graphics.Bitmap
 import com.ys.coil.DefaultRequestOptions
 import com.ys.coil.decode.Options
-import com.ys.coil.request.*
+import com.ys.coil.request.CachePolicy
+import com.ys.coil.request.GetRequest
+import com.ys.coil.request.GetRequestBuilder
+import com.ys.coil.request.LoadRequest
+import com.ys.coil.request.LoadRequestBuilder
+import com.ys.coil.size.PixelSize
 import com.ys.coil.size.Scale
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -42,3 +47,6 @@ inline fun createLoadRequest(
     context: Context,
     builder: LoadRequestBuilder.() -> Unit = {}
 ): LoadRequest = LoadRequestBuilder(context, DefaultRequestOptions()).data(Any()).apply(builder).build()
+
+val Bitmap.size: PixelSize
+    get() = PixelSize(width, height)

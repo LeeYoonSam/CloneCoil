@@ -30,6 +30,8 @@ object Library {
     const val OKIO = "com.squareup.okio:okio:2.3.0"
 
     // TEST
+    const val JUNIT = "junit:junit:4.13.2"
+
     const val KOTLINX_COROUTINES_TEST = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$COROUTINES_VERSION"
 
     const val ANDROIDX_TEST_CORE = "androidx.test:core-ktx:1.4.0"
