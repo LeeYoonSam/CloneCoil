@@ -61,6 +61,7 @@ fun DependencyHandler.addTestDependencies(kotlinVersion: String) {
     testImplementation(project(":coil-test"))
 
     testImplementation(kotlin("test-junit", kotlinVersion))
+
     testImplementation(Library.KOTLINX_COROUTINES_TEST)
 
     testImplementation(Library.ANDROIDX_TEST_CORE)
@@ -73,6 +74,8 @@ fun DependencyHandler.addTestDependencies(kotlinVersion: String) {
 }
 
 fun DependencyHandler.addAndroidTestDependencies(kotlinVersion: String) {
+    androidTestImplementation(project(":coil-test"))
+
     androidTestImplementation(kotlin("test-junit", kotlinVersion))
 
     androidTestImplementation(Library.ANDROIDX_TEST_CORE)

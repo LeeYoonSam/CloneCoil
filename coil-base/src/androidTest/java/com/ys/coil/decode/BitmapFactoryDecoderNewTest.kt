@@ -17,13 +17,10 @@ import okio.buffer
 import okio.source
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-@RunWith(RobolectricTestRunner::class)
 class BitmapFactoryDecoderNewTest {
 	private lateinit var context: Context
 	private lateinit var decoderFactory: BitmapFactoryDecoderNew.Factory
@@ -45,6 +42,16 @@ class BitmapFactoryDecoderNewTest {
 		assertTrue(drawable is BitmapDrawable)
 		assertEquals(PixelSize(100, 125), drawable.bitmap.size)
 		assertEquals(Bitmap.Config.ARGB_8888, drawable.bitmap.config)
+	}
+
+	@Test
+	fun malformedImageThrows() {
+		assertFailsWith<IllegalStateException> {
+			decode(
+				assetName = "malformed.jpg",
+				size = PixelSize(100, 100)
+			)
+		}
 	}
 
 	private fun decodeBitmap(assetName: String, size: Size): Bitmap =

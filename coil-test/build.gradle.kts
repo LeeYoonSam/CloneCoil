@@ -30,6 +30,10 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    packagingOptions {
+        resources.pickFirsts += "META-INF/AL2.0"
+        resources.pickFirsts += "META-INF/LGPL2.1"
+    }
 }
 
 dependencies {
