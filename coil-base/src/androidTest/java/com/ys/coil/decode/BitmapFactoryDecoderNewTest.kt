@@ -12,6 +12,7 @@ import com.ys.coil.size.OriginalSize
 import com.ys.coil.size.PixelSize
 import com.ys.coil.size.Scale
 import com.ys.coil.size.Size
+import com.ys.coil.test.util.similarTo
 import com.ys.coil.util.size
 import kotlinx.coroutines.runBlocking
 import okio.buffer
@@ -72,6 +73,17 @@ class BitmapFactoryDecoderNewTest {
 		val size = OriginalSize
 		val normal = decodeBitmap("normal.jpg", size)
 		assertEquals(PixelSize(1080, 1350), normal.size)
+	}
+
+	@Test
+	fun exifTransformationsAreAppliedCorrectly() {
+		val size = PixelSize(500, 500)
+		val normal = decodeBitmap("normal.jpg", size)
+
+		for (index in 1..8) {
+			val other = decodeBitmap("exif/$index.jpg", size)
+			assertTrue(normal.similarTo(other), "Image with index $index is incorrect.")
+		}
 	}
 
 	private fun decodeBitmap(assetName: String, size: Size): Bitmap =
