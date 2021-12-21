@@ -3,6 +3,7 @@ package com.ys.coil.decode
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build.VERSION
 import androidx.test.core.app.ApplicationProvider
 import com.ys.coil.ImageLoader
 import com.ys.coil.decode.DataSource.DISK
@@ -12,11 +13,14 @@ import com.ys.coil.size.OriginalSize
 import com.ys.coil.size.PixelSize
 import com.ys.coil.size.Scale
 import com.ys.coil.size.Size
+import com.ys.coil.test.util.assertIsSimilarTo
 import com.ys.coil.test.util.similarTo
+import com.ys.coil.util.decodeBitmapAsset
 import com.ys.coil.util.size
 import kotlinx.coroutines.runBlocking
 import okio.buffer
 import okio.source
+import org.junit.Assume
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -84,6 +88,25 @@ class BitmapFactoryDecoderNewTest {
 			val other = decodeBitmap("exif/$index.jpg", size)
 			assertTrue(normal.similarTo(other), "Image with index $index is incorrect.")
 		}
+	}
+
+	@Test
+	fun largeExifMetadata() {
+		val size = PixelSize(500, 500)
+		val expected = decodeBitmap("exif/large_metadata_normalized.jpg", size)
+		val actual = decodeBitmap("exif/large_metadata.jpg", size)
+		expected.assertIsSimilarTo(actual)
+	}
+
+	@Test
+	fun heicExifMetadata() {
+		// HEIC 파일은 API 30 이전에 지원되지 않습니다.
+		Assume.assumeTrue(VERSION.SDK_INT >= 30)
+
+		// 이것이 완료되고 무한 루프로 끝나지 않는지 확인하십시오.
+		val normal = context.decodeBitmapAsset("exif/basic.heic")
+		val actual = decodeBitmap("exif/basic.heic", OriginalSize)
+		normal.assertIsSimilarTo(actual)
 	}
 
 	private fun decodeBitmap(assetName: String, size: Size): Bitmap =

@@ -72,3 +72,23 @@ fun Bitmap.similarTo(
 
 	return computeSimilarity(expected) >= threshold
 }
+
+/**
+ * [this]와 [expected]가 같은 크기이고 that
+ * ARGB 채널의 상호 상관은 >= [threshold]입니다.
+ */
+fun Bitmap.assertIsSimilarTo(
+	expected: Bitmap,
+	@FloatRange(from = -1.0, to = 1.0) threshold: Double = 0.99
+) {
+	require(threshold in -1.0..1.0) { "Invalid threshold: $threshold" }
+	require(width == expected.width && height == expected.height) {
+		"The actual image ($width, $height) is not the same size as the " +
+			"expected image (${expected.width}, ${expected.height})."
+	}
+
+	val similarity = computeSimilarity(expected)
+	check(similarity >= threshold) {
+		"The images are not visually similar. Expected: $threshold; Actual: $similarity."
+	}
+}
