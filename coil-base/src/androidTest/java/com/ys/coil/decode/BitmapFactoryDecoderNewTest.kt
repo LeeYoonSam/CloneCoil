@@ -109,6 +109,35 @@ class BitmapFactoryDecoderNewTest {
 		normal.assertIsSimilarTo(actual)
 	}
 
+	@Test
+	fun allowInexactSize_true() {
+		val result = decodeBitmap(
+			assetName = "normal.jpg",
+			options = Options(
+				context = context,
+				size = PixelSize(1500, 1500),
+				scale = Scale.FIT,
+				allowInexactSize = true
+			)
+		)
+
+		assertEquals(PixelSize(1080, 1350), result.size)
+	}
+
+	@Test
+	fun allowInexactSize_false() {
+		val result = decodeBitmap(
+			assetName = "normal.jpg",
+			options = Options(
+				context = context,
+				size = PixelSize(1500, 1500),
+				scale = Scale.FIT,
+				allowInexactSize = false
+			)
+		)
+		assertEquals(PixelSize(1200, 1500), result.size)
+	}
+
 	private fun decodeBitmap(assetName: String, size: Size): Bitmap =
 		decodeBitmap(assetName, Options(context = context, size = size, scale = Scale.FILL))
 
