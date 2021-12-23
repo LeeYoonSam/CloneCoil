@@ -25,6 +25,7 @@ import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class BitmapFactoryDecoderNewTest {
@@ -167,6 +168,36 @@ class BitmapFactoryDecoderNewTest {
 		)
 		assertEquals(PixelSize(500, 625), result.size)
 		assertEquals(Bitmap.Config.ARGB_8888, result.config)
+	}
+
+	@Test
+	fun premultipliedAlpha_true() {
+		val result = decodeBitmap(
+			assetName = "normal_alpha.png",
+			options = Options(
+				context = context,
+				size = PixelSize(400, 200),
+				scale = Scale.FILL,
+				premultipliedAlpha = true
+			)
+		)
+		assertEquals(PixelSize(400, 200), result.size)
+		assertTrue(result.isPremultiplied)
+	}
+
+	@Test
+	fun premultipliedAlpha_false() {
+		val result = decodeBitmap(
+			assetName = "normal_alpha.png",
+			options = Options(
+				context = context,
+				size = PixelSize(400, 200),
+				scale = Scale.FILL,
+				premultipliedAlpha = false
+			)
+		)
+		assertEquals(PixelSize(400, 200), result.size)
+		assertFalse(result.isPremultiplied)
 	}
 
 	private fun decodeBitmap(assetName: String, size: Size): Bitmap =
