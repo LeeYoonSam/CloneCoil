@@ -21,6 +21,7 @@ import kotlinx.coroutines.runBlocking
 import okio.buffer
 import okio.source
 import org.junit.Assume
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -198,6 +199,27 @@ class BitmapFactoryDecoderNewTest {
 		)
 		assertEquals(PixelSize(400, 200), result.size)
 		assertFalse(result.isPremultiplied)
+	}
+
+	@Test
+	fun lossyWebP() {
+		val expected = decodeBitmap("normal.jpg", PixelSize(450, 675))
+		decodeBitmap("lossy.webp", PixelSize(450, 675)).assertIsSimilarTo(expected)
+	}
+
+	@Test
+	fun png_16bit() {
+		// 에뮬레이터는 pre-23에서 메모리가 부족합니다.
+		assumeTrue(VERSION.SDK_INT >= 23)
+
+		val (drawable, isSampled) = decode("16_bit.png", PixelSize(250, 250))
+
+		assertTrue(isSampled)
+		assertTrue(drawable is BitmapDrawable)
+		assertEquals(PixelSize(250, 250), drawable.bitmap.size)
+
+		val expectedConfig = if (VERSION.SDK_INT >= 26) Bitmap.Config.RGBA_F16 else Bitmap.Config.ARGB_8888
+		assertEquals(expectedConfig, drawable.bitmap.config)
 	}
 
 	private fun decodeBitmap(assetName: String, size: Size): Bitmap =
