@@ -138,6 +138,37 @@ class BitmapFactoryDecoderNewTest {
 		assertEquals(PixelSize(1200, 1500), result.size)
 	}
 
+	@Test
+	fun allowRgb565_true() {
+		val result = decodeBitmap(
+			assetName = "normal.jpg",
+			options = Options(
+				context = context,
+				size = PixelSize(500, 500),
+				scale = Scale.FILL,
+				allowRgb565 = true
+			)
+		)
+
+		assertEquals(PixelSize(500, 625), result.size)
+		assertEquals(Bitmap.Config.RGB_565, result.config)
+	}
+
+	@Test
+	fun allowRgb565_false() {
+		val result = decodeBitmap(
+			assetName = "normal.jpg",
+			options = Options(
+				context = context,
+				size = PixelSize(500, 500),
+				scale = Scale.FILL,
+				allowRgb565 = false
+			)
+		)
+		assertEquals(PixelSize(500, 625), result.size)
+		assertEquals(Bitmap.Config.ARGB_8888, result.config)
+	}
+
 	private fun decodeBitmap(assetName: String, size: Size): Bitmap =
 		decodeBitmap(assetName, Options(context = context, size = size, scale = Scale.FILL))
 
