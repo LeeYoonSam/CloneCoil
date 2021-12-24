@@ -7,17 +7,16 @@ import com.ys.coil.request.RequestBuilder
  *
  * @see RequestBuilder.size
  */
-interface SizeResolver {
+fun interface SizeResolver {
 
     companion object {
         /**
          * 고정된 [Size]로 [SizeResolver] 인스턴스를 생성합니다.
          */
-        operator fun invoke(size: Size): SizeResolver {
-            return object : SizeResolver {
-                override suspend fun size() = size
-            }
-        }
+        @JvmStatic
+        @JvmName("create")
+        operator fun invoke(size: Size): SizeResolver = RealSizeResolver(size)
+
     }
 
     /**
