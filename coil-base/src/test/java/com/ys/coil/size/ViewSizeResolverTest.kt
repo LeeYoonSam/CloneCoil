@@ -5,18 +5,38 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.setPadding
 import androidx.test.core.app.ApplicationProvider
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @RunWith(RobolectricTestRunner::class)
 class ViewSizeResolverTest {
+
     private val context: Context = ApplicationProvider.getApplicationContext()
+    private lateinit var view: View
+    private lateinit var  resolver: ViewSizeResolver<View>
+    private lateinit var scope: CoroutineScope
+
+    @After
+    fun after() {
+        scope.cancel()
+    }
+
+    @Before
+    fun before() {
+        view = View(context)
+        resolver = ViewSizeResolver(view)
+        scope = CoroutineScope(Dispatchers.Main.immediate)
+    }
 
     @Test
     fun `view is already measured`() {
@@ -34,13 +54,29 @@ class ViewSizeResolverTest {
     }
 
     @Test
-    fun `suspend until view is measured`() {
-        val view = View(context)
-        val resolver = ViewSizeResolver(view)
+    fun `view padding is ignored`() {
+        resolver = ViewSizeResolver(view = view, subtractPadding = false)
+        view.layoutParams= ViewGroup.LayoutParams(100, 100)
+        view.setPadding(10)
 
-        val deferred = GlobalScope.async(Dispatchers.Main.immediate) {
+        val size = runBlocking {
             resolver.size()
         }
+
+        assertEquals(PixelSize(100, 100), size)
+    }
+
+    @Test
+    fun `suspend until view is measured`() {
+        val deferred = scope.async(Dispatchers.Main.immediate) {
+            resolver.size()
+        }
+
+        // View가 측정될 때까지 사전 그리기 패스는 무시되어야 합니다.
+        view.viewTreeObserver.dispatchOnPreDraw()
+        assertTrue(deferred.isActive)
+        view.viewTreeObserver.dispatchOnPreDraw()
+        assertTrue(deferred.isActive)
 
         view.setPadding(20)
         view.measure(160, 160)
@@ -52,5 +88,24 @@ class ViewSizeResolverTest {
         }
 
         assertEquals(PixelSize(120, 120), size)
+    }
+
+    @Test
+    fun `wrap_content is resolved to the size of the display`() {
+        val expectedWidth = view.context.resources.displayMetrics.widthPixels
+        val deferred = scope.async(Dispatchers.Main.immediate) {
+            resolver.size()
+        }
+
+        view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 100)
+        view.measure(ViewGroup.LayoutParams.WRAP_CONTENT, 100)
+        view.layout(0, 0, 0, 100)
+        view.viewTreeObserver.dispatchOnPreDraw()
+
+        val size = runBlocking {
+            deferred.await()
+        }
+
+        assertEquals(PixelSize(expectedWidth, 100), size)
     }
 }
