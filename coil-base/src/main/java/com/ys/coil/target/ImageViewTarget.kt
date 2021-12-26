@@ -1,10 +1,7 @@
 package com.ys.coil.target
 
-import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import com.ys.coil.drawable.CrossfadeDrawable
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -12,26 +9,11 @@ import kotlin.coroutines.resume
 /**
  * [ImageView]에서 이미지 설정을 처리하는 [Target].
  */
-class ImageViewTarget(override val view: ImageView) : PoolableViewTarget<ImageView>, DefaultLifecycleObserver {
-    private var isStarted = false
+open class ImageViewTarget(override val view: ImageView) : GenericViewTarget<ImageView>() {
 
-    override fun onStart(placeHolder: Drawable?) = setDrawable(placeHolder)
-
-    override fun onSuccess(result: Drawable) = setDrawable(result)
-
-    override fun onError(error: Drawable?) = setDrawable(error)
-
-    override fun onClear() = setDrawable(null)
-
-    override fun onStart(owner: LifecycleOwner) {
-        isStarted = true
-        updateAnimation()
-    }
-
-    override fun onStop(owner: LifecycleOwner) {
-        isStarted = false
-        updateAnimation()
-    }
+    override var drawable: Drawable?
+        get() = view.drawable
+        set(value) = view.setImageDrawable(value)
 
     /**
      * 요청 성공한 [Drawable]을 현재 드로어블과 크로스페이드하는 내부 메서드입니다.
@@ -54,15 +36,10 @@ class ImageViewTarget(override val view: ImageView) : PoolableViewTarget<ImageVi
         onSuccess(drawable)
     }
 
-    private fun setDrawable(drawable: Drawable?) {
-        (view.drawable as? Animatable)?.stop()
-        view.setImageDrawable(drawable)
-        updateAnimation()
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other is ImageViewTarget && view == other.view
     }
 
-    private fun updateAnimation() {
-        val animatable = view.drawable as? Animatable ?: return
-        if (isStarted) animatable.start() else animatable.stop()
-
-    }
+    override fun hashCode() = view.hashCode()
 }
