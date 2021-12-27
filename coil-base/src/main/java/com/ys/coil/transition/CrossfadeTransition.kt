@@ -1,10 +1,14 @@
 package com.ys.coil.transition
 
+import android.widget.ImageView
 import com.ys.coil.decode.DataSource
 import com.ys.coil.drawable.CrossfadeDrawable
+import com.ys.coil.drawable.CrossfadeDrawableNew
 import com.ys.coil.request.ErrorResult
 import com.ys.coil.request.ImageResult
 import com.ys.coil.request.SuccessResult
+import com.ys.coil.size.Scale
+import com.ys.coil.util.scale
 
 /**
  * 현재 드로어블에서 새 드로어블로 크로스페이드하는 [전환]입니다.
@@ -24,16 +28,14 @@ class CrossfadeTransition @JvmOverloads constructor(
 	}
 
 	override fun transition() {
-		// Todo: CrossfadeDrawble 수정 후 적용
-
-		// val drawable = CrossfadeDrawable(
-		// 	start = target.drawable,
-		// 	end = result.drawable,
-		// 	scale = (target.view as? ImageView)?.scale ?: Scale.FIT,
-		// 	durationMillis = durationMillis,
-		// 	fadeStart = !(result is SuccessResult && result.isPlaceholderCached),
-		// 	preferExactIntrinsicSize = preferExactIntrinsicSize
-		// )
+		val drawable = CrossfadeDrawableNew(
+			start = target.drawable,
+			end = result.drawable,
+			scale = (target.view as? ImageView)?.scale ?: Scale.FIT,
+			durationMillis = durationMillis,
+			fadeStart = !(result is SuccessResult && result.isPlaceholderCached),
+			preferExactIntrinsicSize = preferExactIntrinsicSize
+		)
 
 		when (result) {
 			is SuccessResult -> target.onSuccess(result.drawable)

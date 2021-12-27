@@ -28,7 +28,12 @@ class SuccessResult(
 	/**
 	 * 이미지가 로드된 데이터 소스입니다.
 	 */
-	val dataSource: DataSource
+	val dataSource: DataSource,
+
+	/**
+	 * [ImageRequest.placeholderMemoryCacheKey]가 메모리 캐시에 있으면 'true'입니다.
+	 */
+	val isPlaceholderCached: Boolean
 ) : ImageResult()
 
 class ErrorResult(
