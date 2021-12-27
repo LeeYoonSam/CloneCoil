@@ -3,7 +3,6 @@ package com.ys.coil.transition
 import android.widget.ImageView
 import com.ys.coil.decode.DataSource
 import com.ys.coil.drawable.CrossfadeDrawable
-import com.ys.coil.drawable.CrossfadeDrawableNew
 import com.ys.coil.request.ErrorResult
 import com.ys.coil.request.ImageResult
 import com.ys.coil.request.SuccessResult
@@ -28,7 +27,7 @@ class CrossfadeTransition @JvmOverloads constructor(
 	}
 
 	override fun transition() {
-		val drawable = CrossfadeDrawableNew(
+		val drawable = CrossfadeDrawable(
 			start = target.drawable,
 			end = result.drawable,
 			scale = (target.view as? ImageView)?.scale ?: Scale.FIT,
@@ -38,8 +37,8 @@ class CrossfadeTransition @JvmOverloads constructor(
 		)
 
 		when (result) {
-			is SuccessResult -> target.onSuccess(result.drawable)
-			is ErrorResult -> target.onError(result.drawable)
+			is SuccessResult -> target.onSuccess(drawable)
+			is ErrorResult -> target.onError(drawable)
 		}
 	}
 

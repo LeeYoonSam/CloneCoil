@@ -8,9 +8,9 @@ import com.ys.coil.ImageLoader
 import com.ys.coil.R
 import com.ys.coil.drawable.CrossfadeDrawable
 import com.ys.coil.request.Request
-import com.ys.coil.target.Target
 import com.ys.coil.target.ImageViewTarget
 import com.ys.coil.target.PoolableViewTarget
+import com.ys.coil.target.Target
 
 /**
  * [Target]을 래핑하여 [Bitmap] 풀링을 지원합니다.
@@ -147,7 +147,7 @@ private inline fun Poolable.instrument(bitmap: Bitmap?, update: PoolableViewTarg
 private suspend inline fun Poolable.onSuccess(result: Drawable, crossfadeMillis: Int) {
     val target = target
     if (crossfadeMillis > 0 && target is ImageViewTarget) {
-        target.onSuccessCrossfade(result, crossfadeMillis)
+        target.onSuccess(result)
     } else {
         target.onSuccess(result)
     }
