@@ -4,13 +4,10 @@ import okio.Buffer
 import okio.ForwardingSink
 import okio.IOException
 import okio.Sink
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 /**
  * 기본 싱크가 발생하더라도 [IOException]을 발생시키지 않는 싱크입니다.
  */
-@ExperimentalContracts
 internal open class FaultHidingSink(
 	delegate: Sink,
 	private val onException: (IOException) -> Unit
@@ -46,9 +43,6 @@ internal open class FaultHidingSink(
 	}
 
 	private inline fun runOrIOException(runBlock: () -> Unit) {
-		contract {
-			callsInPlace(runBlock, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
-		}
 
 		try {
 			runBlock()

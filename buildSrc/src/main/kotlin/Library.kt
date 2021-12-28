@@ -27,7 +27,7 @@ object Library {
     private const val OKHTTP_VERSION = "4.9.2"
     const val OKHTTP = "com.squareup.okhttp3:okhttp:$OKHTTP_VERSION"
 
-    const val OKIO = "com.squareup.okio:okio:2.3.0"
+    const val OKIO = "com.squareup.okio:okio:3.0.0-alpha.10"
 
     // TEST
     const val JUNIT = "junit:junit:4.13.2"
