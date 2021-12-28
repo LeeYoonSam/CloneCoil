@@ -25,7 +25,7 @@ interface DiskCache {
 	 * 중요: **완료되면 **[Snapshot.close] 또는 [Snapshot.closeAndEdit]를 호출해야 합니다.
 	 * 스냅샷을 읽고 있습니다. 열린 스냅샷은 항목을 편집하거나 디스크에서 삭제할 수 없습니다.
 	 */
-	operator fun get(key: String): Snapshot
+	operator fun get(key: String): Snapshot?
 
 	/**
 	 * [key]와 관련된 항목을 편집합니다.

@@ -644,7 +644,7 @@ internal class DiskLruCache(
     }
 
     /** 항목 값의 스냅샷입니다. */
-    inner class Snapshot(val entry: Entry) : Closeable {
+    inner class Snapshot(private val entry: Entry) : Closeable {
 
         private var closed = false
 
