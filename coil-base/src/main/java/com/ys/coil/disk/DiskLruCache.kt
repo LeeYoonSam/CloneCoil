@@ -34,47 +34,44 @@ import java.io.File
 import java.util.concurrent.Executors
 
 /**
- * A cache that uses a bounded amount of space on a filesystem. Each cache entry has a string key
- * and a fixed number of values. Each key must match the regex `[a-z0-9_-]{1,64}`. Values are byte
- * sequences, accessible as streams or files. Each value must be between `0` and `Int.MAX_VALUE`
- * bytes in length.
+ * 파일 시스템에서 제한된 양의 공간을 사용하는 캐시입니다.
+ * 각 캐시 항목에는 문자열 키와 고정된 수의 값이 있습니다.
+ * 각 키는 정규식 `[a-z0-9_-]{1,64}`과 일치해야 합니다.
+ * 값은 스트림 또는 파일로 액세스할 수 있는 바이트 시퀀스입니다.
+ * 각 값의 길이는 '0'에서 'Int.MAX_VALUE'바이트 사이여야 합니다.
  *
- * The cache stores its data in a directory on the filesystem. This directory must be exclusive to
- * the cache; the cache may delete or overwrite files from its directory. It is an error for
- * multiple processes to use the same cache directory at the same time.
+ * 캐시는 파일 시스템의 디렉토리에 데이터를 저장합니다.
+ * 이 디렉토리는 캐시 전용이어야 합니다.
+ * 캐시는 디렉토리에서 파일을 삭제하거나 덮어쓸 수 있습니다.
+ * 여러 프로세스가 동시에 동일한 캐시 디렉토리를 사용하는 것은 오류입니다.
  *
- * This cache limits the number of bytes that it will store on the filesystem. When the number of
- * stored bytes exceeds the limit, the cache will remove entries in the background until the limit
- * is satisfied. The limit is not strict: the cache may temporarily exceed it while waiting for
- * files to be deleted. The limit does not include filesystem overhead or the cache journal so
- * space-sensitive applications should set a conservative limit.
+ * 이 캐시는 파일 시스템에 저장할 바이트 수를 제한합니다.
+ * 저장된 바이트 수가 제한을 초과하면 캐시는 제한이 충족될 때까지 백그라운드에서 항목을 제거합니다.
+ * 제한은 엄격하지 않습니다.
+ * 파일이 삭제되기를 기다리는 동안 캐시가 일시적으로 초과할 수 있습니다.
+ * 이 제한에는 파일 시스템 오버헤드나 캐시 저널이 포함되지 않으므로 공간에 민감한 애플리케이션은 보수적 제한을 설정해야 합니다.
  *
- * Clients call [edit] to create or update the values of an entry. An entry may have only one editor
- * at one time; if a value is not available to be edited then [edit] will return null.
+ * 클라이언트는 항목의 값을 생성하거나 업데이트하기 위해 [edit]를 호출합니다.
+ * 항목에는 한 번에 하나의 편집기만 있을 수 있습니다.
+ * 값을 편집할 수 없는 경우 [edit]은 null을 반환합니다.
  *
- *  * When an entry is being **created** it is necessary to supply a full set of values; the empty
- *    value should be used as a placeholder if necessary.
+ *  * 항목이 **만들어질 때** 전체 값 집합을 제공해야 합니다. 필요한 경우 빈 값을 자리 표시자로 사용해야 합니다.
+ *  * 항목을 **편집**할 때 모든 값에 대한 데이터를 제공할 필요는 없습니다. 값의 기본값은 이전 값입니다.
  *
- *  * When an entry is being **edited**, it is not necessary to supply data for every value; values
- *    default to their previous value.
+ * 모든 [edit] 호출은 [Editor.commit] 또는 [Editor.abort] 호출과 일치해야 합니다. 커밋은 원자적입니다.
+ * 읽기는 커밋 전후의 전체 값 집합을 관찰하지만 값의 혼합은 절대 관찰하지 않습니다.
  *
- * Every [edit] call must be matched by a call to [Editor.commit] or [Editor.abort]. Committing is
- * atomic: a read observes the full set of values as they were before or after the commit, but never
- * a mix of values.
+ * 클라이언트는 항목의 스냅샷을 읽기 위해 [get]을 호출합니다. 읽기는 당시의 값을 관찰할 것입니다.
+ * [get]이 호출되었습니다. 호출 후 업데이트 및 제거는 진행 중인 읽기에 영향을 미치지 않습니다.
  *
- * Clients call [get] to read a snapshot of an entry. The read will observe the value at the time
- * that [get] was called. Updates and removals after the call do not impact ongoing reads.
+ * 이 클래스는 일부 I/O 오류를 허용합니다. 파일 시스템에서 파일이 누락된 경우 해당 항목이 캐시에서 삭제됩니다.
+ * 캐시 값을 쓰는 동안 오류가 발생하면 편집이 자동으로 실패합니다.
+ * 호출자는 `IOException`을 포착하고 적절하게 응답하여 다른 문제를 처리해야 합니다.
  *
- * This class is tolerant of some I/O errors. If files are missing from the filesystem, the
- * corresponding entries will be dropped from the cache. If an error occurs while writing a cache
- * value, the edit will fail silently. Callers should handle other problems by catching
- * `IOException` and responding appropriately.
- *
- * @constructor Create a cache which will reside in [directory]. This cache is lazily initialized on
- *  first access and will be created if it does not exist.
- * @param directory a writable directory.
- * @param valueCount the number of values per cache entry. Must be positive.
- * @param maxSize the maximum number of bytes this cache should use to store.
+ * @constructor [directory]에 상주할 캐시를 만듭니다. 이 캐시는 처음 액세스할 때 느리게 초기화되며 존재하지 않는 경우 생성됩니다.
+ * @param directory 쓰기 가능한 디렉토리.
+ * @param valueCount 캐시 항목당 값의 수입니다. 긍정적이어야 합니다.
+ * @param maxSize 이 캐시가 저장하는 데 사용해야 하는 최대 바이트 수입니다.
  */
 @OptIn(ExperimentalFileSystem::class)
 internal class DiskLruCache(
@@ -86,7 +83,7 @@ internal class DiskLruCache(
 ) : Closeable {
 
     /*
-     * This cache uses a journal file named "journal". A typical journal file looks like this:
+     * 이 캐시는 "journal"이라는 저널 파일을 사용합니다. 일반적인 저널 파일은 다음과 같습니다.:
      *
      *     libcore.io.DiskLruCache
      *     1
@@ -102,27 +99,26 @@ internal class DiskLruCache(
      *     READ 335c4c6028171cfddfbaae1a9c313c52
      *     READ 3400330d1dfc7f3f7f4b8d4d803dfcf6
      *
-     * The first five lines of the journal form its header. They are the constant string
-     * "libcore.io.DiskLruCache", the disk cache's version, the application's version, the value
-     * count, and a blank line.
+     * 저널의 처음 5줄은 헤더를 형성합니다.
+     * 상수 문자열 "libcore.io.DiskLruCache", 디스크 캐시 버전, 응용 프로그램 버전, 값 개수 및 빈 줄입니다.
      *
-     * Each of the subsequent lines in the file is a record of the state of a cache entry. Each line
-     * contains space-separated values: a state, a key, and optional state-specific values.
+     * 파일의 각 후속 행은 캐시 항목의 상태에 대한 레코드입니다.
+     * 각 줄에는 상태, 키 및 선택적 상태별 값과 같은 공백으로 구분된 값이 포함됩니다.
      *
-     *   o DIRTY lines track that an entry is actively being created or updated. Every successful
-     *     DIRTY action should be followed by a CLEAN or REMOVE action. DIRTY lines without a matching
-     *     CLEAN or REMOVE indicate that temporary files may need to be deleted.
+     *   o DIRTY 행은 항목이 활발하게 생성 또는 업데이트되고 있음을 추적합니다.
+     *      모든 성공적인 DIRTY 작업 뒤에는 CLEAN 또는 REMOVE 작업이 따라야 합니다.
+     *      일치하는 CLEAN 또는 REMOVE가 없는 DIRTY 행은 임시 파일을 삭제해야 할 수도 있음을 나타냅니다.
      *
-     *   o CLEAN lines track a cache entry that has been successfully published and may be read. A
-     *     publish line is followed by the lengths of each of its values.
+     *   o CLEAN 라인은 성공적으로 게시되어 읽을 수 있는 캐시 항목을 추적합니다. 게시 행 다음에 각 값의 길이가 옵니다.
      *
-     *   o READ lines track accesses for LRU.
+     *   o READ 라인은 LRU에 대한 액세스를 추적합니다.
      *
-     *   o REMOVE lines track entries that have been deleted.
+     *   o REMOVE 행은 삭제된 항목을 추적합니다.
      *
-     * The journal file is appended to as cache operations occur. The journal may occasionally be
-     * compacted by dropping redundant lines. A temporary file named "journal.tmp" will be used during
-     * compaction; that file should be deleted if it exists when the cache is opened.
+     * 캐시 작업이 발생하면 저널 파일이 추가됩니다.
+     * 저널은 때때로 중복 행을 삭제하여 압축될 수 있습니다.
+     * 압축하는 동안 "journal.tmp"라는 임시 파일이 사용됩니다.
+     * 캐시가 열릴 때 해당 파일이 있으면 삭제해야 합니다.
      */
 
     private val journalFile: Path
@@ -134,7 +130,7 @@ internal class DiskLruCache(
     private var journalWriter: BufferedSink? = null
     private var hasJournalErrors = false
 
-    // Must be read and written when synchronized on 'this'.
+    // 'this'에 동기화될 때 읽고 써야 합니다.
     private var initialized = false
     private var closed = false
     private var mostRecentTrimFailed = false
@@ -185,7 +181,7 @@ internal class DiskLruCache(
     private fun initialize() {
         if (initialized) return
 
-        // If a bkp file exists, use it instead.
+        // bkp 파일이 있으면 대신 사용하십시오.
         if (fileSystem.exists(journalFileBackup)) {
             // If journal file also exists just delete backup file.
             if (fileSystem.exists(journalFile)) {
@@ -195,7 +191,7 @@ internal class DiskLruCache(
             }
         }
 
-        // Prefer to pick up where we left off.
+        // 우리가 중단 한 곳에서 픽업하는 것을 선호합니다.
         if (fileSystem.exists(journalFile)) {
             try {
                 readJournal()
@@ -203,12 +199,11 @@ internal class DiskLruCache(
                 initialized = true
                 return
             } catch (_: IOException) {
-                // The journal is corrupt.
+                // 저널이 손상되었습니다.
             }
 
-            // The cache is corrupted, attempt to delete the contents of the directory. This can
-            // throw and we'll let that propagate out as it likely means there is a severe
-            // filesystem problem.
+            // 캐시가 손상되었습니다. 디렉토리의 내용을 삭제하십시오.
+            // 심각한 파일 시스템 문제가 있음을 의미할 수 있으므로 이 문제가 발생할 수 있습니다.
             try {
                 delete()
             } finally {
@@ -250,7 +245,7 @@ internal class DiskLruCache(
 
             redundantOpCount = lineCount - lruEntries.size
 
-            // If we ended on a truncated line, rebuild the journal before appending to it.
+            // 잘린 줄로 끝나면 추가하기 전에 저널을 다시 작성하십시오.
             if (!exhausted()) {
                 rebuildJournal()
             } else {
@@ -303,8 +298,7 @@ internal class DiskLruCache(
     }
 
     /**
-     * Computes the initial size and collects garbage as a part of opening the cache.
-     * Dirty entries are assumed to be inconsistent and will be deleted.
+     * 초기 크기를 계산하고 캐시 열기의 일부로 가비지를 수집합니다. 더러운 항목은 일관성이 없는 것으로 간주되어 삭제됩니다.
      */
     private fun processJournal() {
         fileSystem.deleteIfExists(journalFileTmp)
@@ -327,8 +321,8 @@ internal class DiskLruCache(
     }
 
     /**
-     * Creates a new journal that omits redundant information.
-     * This replaces the current journal if it exists.
+     * 중복 정보를 생략하는 새 저널을 만듭니다.
+     * 현재 저널이 있는 경우 이를 대체합니다.
      */
     @Synchronized
     private fun rebuildJournal() {
@@ -369,8 +363,8 @@ internal class DiskLruCache(
     }
 
     /**
-     * Returns a snapshot of the entry named [key], or null if it doesn't exist is not currently
-     * readable. If a value is returned, it is moved to the head of the LRU queue.
+     * 이름이 [key]인 항목의 스냅샷을 반환하거나 현재 읽을 수 없는 항목이 없으면 null을 반환합니다.
+     * 값이 반환되면 LRU 대기열의 헤드로 이동합니다.
      */
     @Synchronized
     operator fun get(key: String): Snapshot? {
@@ -394,7 +388,7 @@ internal class DiskLruCache(
         return snapshot
     }
 
-    /** Returns an editor for the entry named [key], or null if another edit is in progress. */
+    /** [key]라는 항목에 대한 편집기를 반환하거나 다른 편집이 진행 중인 경우 null을 반환합니다. */
     @Synchronized
     fun edit(key: String): Editor? {
         initialize()
@@ -412,16 +406,18 @@ internal class DiskLruCache(
         }
 
         if (mostRecentTrimFailed || mostRecentRebuildFailed) {
-            // The OS has become our enemy! If the trim job failed, it means we are storing more
-            // data than requested by the user. Do not allow edits so we do not go over that limit
-            // any further. If the journal rebuild failed, the journal writer will not be active,
-            // meaning we will not be able to record the edit, causing file leaks. In both cases,
-            // we want to retry the clean up so we can get out of this state!
+            /*
+             OS가 우리의 적이 되었습니다! 자르기 작업이 실패하면 사용자가 요청한 것보다 더 많은 데이터를 저장하고 있음을 의미합니다.
+             더 이상 해당 제한을 초과하지 않도록 편집을 허용하지 마십시오.
+             저널 재구축에 실패하면 저널 작성자가 활성화되지 않습니다.
+             즉, 편집 내용을 기록할 수 없어 파일 누수가 발생합니다.
+             두 경우 모두 정리를 다시 시도하여 이 상태에서 벗어날 수 있습니다!
+             */
             cleanupExecutor.submit(cleanupTask)
             return null
         }
 
-        // Flush the journal before creating files to prevent file leaks.
+        // 파일 누출을 방지하기 위해 파일을 생성하기 전에 저널을 플러시하십시오.
         journalWriter!!.apply {
             writeUtf8(DIRTY)
             writeByte(' '.code)
@@ -444,8 +440,8 @@ internal class DiskLruCache(
     }
 
     /**
-     * Returns the number of bytes currently being used to store the values in this cache.
-     * This may be greater than the max size if a background deletion is pending.
+     * 이 캐시에 값을 저장하는 데 현재 사용 중인 바이트 수를 반환합니다.
+     * 배경 삭제가 보류 중인 경우 최대 크기보다 클 수 있습니다.
      */
     @Synchronized
     fun size(): Long {
@@ -474,7 +470,7 @@ internal class DiskLruCache(
             }
         }
 
-        // Ensure every entry is complete.
+        // 모든 항목이 완료되었는지 확인합니다.
         if (success) {
             for (i in 0 until valueCount) {
                 entry.cleanFiles[i].toFile().createNewFile()
@@ -510,18 +506,17 @@ internal class DiskLruCache(
     }
 
     /**
-     * We only rebuild the journal when it will halve the size of the journal and eliminate at
-     * least 2000 ops.
+     * 저널 크기가 절반으로 줄어들고 최소 2000개의 작업을 제거할 때만 저널을 다시 작성합니다.
      */
     private fun journalRebuildRequired(): Boolean {
         return redundantOpCount >= 2000 && redundantOpCount >= lruEntries.size
     }
 
     /**
-     * Drops the entry for [key] if it exists and can be removed. If the entry for [key] is
-     * currently being edited, that edit will complete normally but its value will not be stored.
+     * [key] 항목이 존재하고 제거할 수 있는 경우 삭제합니다.
+     * [key] 항목이 현재 편집 중인 경우 해당 편집은 정상적으로 완료되지만 해당 값은 저장되지 않습니다.
      *
-     * @return true if an entry was removed.
+     * @return 항목이 제거된 경우 true입니다.
      */
     @Synchronized
     fun remove(key: String): Boolean {
@@ -536,10 +531,9 @@ internal class DiskLruCache(
     }
 
     private fun removeEntry(entry: Entry): Boolean {
-        // If we can't delete files that are still open, mark this entry as a zombie so its files
-        // will be deleted when those files are closed.
+        // 아직 열려 있는 파일을 삭제할 수 없는 경우 이 항목을 좀비로 표시하여 해당 파일이 닫힐 때 파일이 삭제되도록 합니다.
         if (entry.lockingSnapshotCount > 0) {
-            // Mark this entry as 'DIRTY' so that if the process crashes this entry won't be used.
+            // 프로세스가 충돌하는 경우 이 항목이 사용되지 않도록 이 항목을 'DIRTY'로 표시합니다.
             journalWriter?.apply {
                 writeUtf8(DIRTY)
                 writeByte(' '.code)
@@ -553,7 +547,7 @@ internal class DiskLruCache(
             return true
         }
 
-        // Prevent the edit from completing normally.
+        // 편집이 정상적으로 완료되지 않도록 합니다.
         entry.currentEditor?.detach()
 
         for (i in 0 until valueCount) {
@@ -582,7 +576,7 @@ internal class DiskLruCache(
         check(!closed) { "cache is closed" }
     }
 
-    /** Closes this cache. Stored values will remain on the filesystem. */
+    /** 이 캐시를 닫습니다. 저장된 값은 파일 시스템에 남아 있습니다. */
     @Synchronized
     override fun close() {
         if (!initialized || closed) {
@@ -590,10 +584,10 @@ internal class DiskLruCache(
             return
         }
 
-        // Copying for concurrent iteration.
+        // 동시 반복을 위해 복사합니다.
         for (entry in lruEntries.values.toTypedArray()) {
             if (entry.currentEditor != null) {
-                // Prevent the edit from completing normally.
+                // 편집이 정상적으로 완료되지 않도록 합니다.
                 entry.currentEditor?.detach()
             }
         }
@@ -611,7 +605,7 @@ internal class DiskLruCache(
         mostRecentTrimFailed = false
     }
 
-    /** Returns true if an entry was removed. This will return false if all entries are zombies. */
+    /** 항목이 제거된 경우 true를 반환합니다. 모든 항목이 좀비인 경우 false를 반환합니다. */
     private fun removeOldestEntry(): Boolean {
         for (toEvict in lruEntries.values) {
             if (!toEvict.zombie) {
@@ -623,8 +617,7 @@ internal class DiskLruCache(
     }
 
     /**
-     * Closes the cache and deletes all of its stored values. This will delete all files in the
-     * cache directory including files that weren't created by the cache.
+     * 캐시를 닫고 저장된 모든 값을 삭제합니다. 이렇게 하면 캐시에서 생성되지 않은 파일을 포함하여 캐시 디렉터리의 모든 파일이 삭제됩니다.
      */
     fun delete() {
         close()
@@ -632,13 +625,12 @@ internal class DiskLruCache(
     }
 
     /**
-     * Deletes all stored values from the cache. In-flight edits will complete normally but their
-     * values will not be stored.
+     * 캐시에서 저장된 모든 값을 삭제합니다. 기내 편집은 정상적으로 완료되지만 해당 값은 저장되지 않습니다.
      */
     @Synchronized
     fun evictAll() {
         initialize()
-        // Copying for concurrent iteration.
+        // 동시 반복을 위해 복사합니다.
         for (entry in lruEntries.values.toTypedArray()) {
             removeEntry(entry)
         }
@@ -651,7 +643,7 @@ internal class DiskLruCache(
         }
     }
 
-    /** A snapshot of the values for an entry. */
+    /** 항목 값의 스냅샷입니다. */
     inner class Snapshot(val entry: Entry) : Closeable {
 
         private var closed = false
@@ -681,14 +673,14 @@ internal class DiskLruCache(
         }
     }
 
-    /** Edits the values for an entry. */
+    /** 항목의 값을 편집합니다. */
     inner class Editor(val entry: Entry) {
 
         private var closed = false
 
         /**
-         * Get the file to read from/write to for [index].
-         * This file will become the new value for this index if committed.
+         * [index]에 대해 읽고 쓸 파일을 가져옵니다.
+         * 이 파일은 커밋되면 이 인덱스의 새 값이 됩니다.
          */
         fun file(index: Int): File {
             synchronized(this@DiskLruCache) {
@@ -698,23 +690,23 @@ internal class DiskLruCache(
         }
 
         /**
-         * Prevents this editor from completing normally.
-         * This is necessary if the target entry is evicted while this editor is active.
+         * 이 편집기가 정상적으로 완료되지 않도록 합니다.
+         * 이 편집기가 활성화되어 있는 동안 대상 항목이 축출되는 경우에 필요합니다.
          */
         fun detach() {
             if (entry.currentEditor == this) {
-                entry.zombie = true // We can't delete it until the current edit completes.
+                entry.zombie = true //현재 수정이 완료될 때까지 삭제할 수 없습니다.
             }
         }
 
         /**
-         * Commits this edit so it is visible to readers.
-         * This releases the edit lock so another edit may be started on the same key.
+         * 독자가 볼 수 있도록 이 편집을 커밋합니다.
+         * 이렇게 하면 편집 잠금이 해제되어 동일한 키에서 다른 편집이 시작될 수 있습니다.
          */
         fun commit() = complete(true)
 
         /**
-         * Commit the edit and open a new [Snapshot] atomically.
+         * 편집을 커밋하고 새 [Snapshot]을 원자적으로 엽니다.
          */
         fun commitAndGet(): Snapshot? {
             synchronized(this@DiskLruCache) {
@@ -724,13 +716,13 @@ internal class DiskLruCache(
         }
 
         /**
-         * Aborts this edit.
-         * This releases the edit lock so another edit may be started on the same key.
+         * 이 편집을 중단합니다.
+         * 이렇게 하면 편집 잠금이 해제되어 동일한 키에서 다른 편집이 시작될 수 있습니다.
          */
         fun abort() = complete(false)
 
         /**
-         * Complete this edit either successfully or unsuccessfully.
+         * 이 편집을 성공 또는 실패로 완료하십시오.
          */
         private fun complete(success: Boolean) {
             synchronized(this@DiskLruCache) {
@@ -745,31 +737,30 @@ internal class DiskLruCache(
 
     inner class Entry(val key: String) {
 
-        /** Lengths of this entry's files. */
+        /** 이 항목 파일의 길이입니다. */
         val lengths = LongArray(valueCount)
         val cleanFiles = ArrayList<Path>(valueCount)
         val dirtyFiles = ArrayList<Path>(valueCount)
 
-        /** True if this entry has ever been published. */
+        /** 이 항목이 게시된 적이 있으면 True입니다. */
         var readable = false
 
-        /** True if this entry must be deleted when the current edit or read completes. */
+        /** 현재 편집 또는 읽기가 완료될 때 이 항목을 삭제해야 하는 경우 True입니다. */
         var zombie = false
 
         /**
-         * The ongoing edit or null if this entry is not being edited. When setting this to null
-         * the entry must be removed if it is a zombie.
+         * 진행 중인 편집이거나 이 항목이 편집되지 않는 경우 null입니다. 이것을 null로 설정하면 항목이 좀비인 경우 제거해야 합니다.
          */
         var currentEditor: Editor? = null
 
         /**
-         * Snapshots currently reading this entry before a write or delete can proceed. When
-         * decrementing this to zero, the entry must be removed if it is a zombie.
+         * 쓰기 또는 삭제를 계속하기 전에 현재 이 항목을 읽고 있는 스냅샷입니다.
+         * 이것을 0으로 감소시킬 때 좀비인 경우 항목을 제거해야 합니다.
          */
         var lockingSnapshotCount = 0
 
         init {
-            // The names are repetitive so re-use the same builder to avoid allocations.
+            // 이름은 반복적이므로 할당을 피하기 위해 동일한 빌더를 다시 사용하십시오.
             val fileBuilder = StringBuilder(key).append('.')
             val truncateTo = fileBuilder.length
             for (i in 0 until valueCount) {
@@ -781,7 +772,7 @@ internal class DiskLruCache(
             }
         }
 
-        /** Set lengths using decimal numbers like "10123". */
+        /** "10123"과 같은 십진수를 사용하여 길이를 설정합니다. */
         fun setLengths(strings: List<String>) {
             if (strings.size != valueCount) {
                 throw IOException("unexpected journal line: $strings")
@@ -796,23 +787,23 @@ internal class DiskLruCache(
             }
         }
 
-        /** Append space-prefixed lengths to [writer]. */
+        /** [writer]에 공백 접두어 길이를 추가합니다. */
         fun writeLengths(writer: BufferedSink) {
             for (length in lengths) {
                 writer.writeByte(' '.code).writeDecimalLong(length)
             }
         }
 
-        /** Returns a snapshot of this entry. */
+        /** 이 항목의 스냅샷을 반환합니다. */
         fun snapshot(): Snapshot? {
             if (!readable) return null
             if (currentEditor != null || zombie) return null
 
-            // Ensure that the entry's files still exist.
+            // 항목의 파일이 여전히 존재하는지 확인하십시오.
             cleanFiles.forEachIndices { file ->
                 if (!fileSystem.exists(file)) {
-                    // Since the entry is no longer valid, remove it so the metadata is accurate
-                    // (i.e. the cache size.)
+                    // 항목이 더 이상 유효하지 않으므로 메타데이터가 정확하도록 제거하십시오.
+                    // (즉, 캐시 크기)
                     try {
                         removeEntry(this)
                     } catch (_: IOException) {}
