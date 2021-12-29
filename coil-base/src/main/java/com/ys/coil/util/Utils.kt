@@ -3,6 +3,7 @@ package com.ys.coil.util
 import android.app.ActivityManager
 import android.content.Context
 import android.content.pm.ApplicationInfo
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.ColorSpace
 import android.os.Build
@@ -32,6 +33,9 @@ internal inline val Any.identityHashCode: Int
 
 internal val Context.safeCacheDir: File get() = cacheDir.apply { mkdirs() }
 
+internal val Configuration.nightMode: Int
+    get() = uiMode and Configuration.UI_MODE_NIGHT_MASK
+
 internal object Utils {
     private const val CACHE_DIRECTORY_NAME = "image_cache"
 
@@ -57,7 +61,6 @@ internal object Utils {
         val activityManager: ActivityManager = context.requireSystemService()
         return if (activityManager.isLowRawDeviceCompat()) LOW_MEMORY_MULTIPLIER else STANDARD_MULTIPLIER
     }
-
 
     fun getDefaultBitmapPoolPercentage(): Double {
         // 풀에 추가할 수 없는 하드웨어 비트맵을 기본으로 하기 때문에 Android O 이상에서 비트맵 풀링에 더 적은 메모리를 할당합니다.
