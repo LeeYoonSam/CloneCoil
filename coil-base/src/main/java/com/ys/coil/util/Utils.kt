@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.ColorSpace
+import android.net.Uri
 import android.os.Build
 import android.os.Looper
 import android.os.StatFs
@@ -32,6 +33,9 @@ internal inline val Any.identityHashCode: Int
     get() = System.identityHashCode(this)
 
 internal val Context.safeCacheDir: File get() = cacheDir.apply { mkdirs() }
+
+internal val Uri.firstPathSegment: String?
+    get() = pathSegments.firstOrNull()
 
 internal val Configuration.nightMode: Int
     get() = uiMode and Configuration.UI_MODE_NIGHT_MASK

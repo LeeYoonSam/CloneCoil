@@ -14,18 +14,19 @@ import androidx.lifecycle.LifecycleOwner
 import com.ys.coil.DefaultRequestOptions
 import com.ys.coil.annotation.BuilderMarker
 import com.ys.coil.decode.DataSource
+import com.ys.coil.drawable.CrossfadeDrawable
+import com.ys.coil.fetch.Fetcher
+import com.ys.coil.memory.RequestService
+import com.ys.coil.size.PixelSize
 import com.ys.coil.size.Scale
 import com.ys.coil.size.Size
 import com.ys.coil.size.SizeResolver
+import com.ys.coil.target.ImageViewTarget
+import com.ys.coil.target.Target
 import com.ys.coil.transform.Transformation
 import com.ys.coil.util.Utils
 import com.ys.coil.util.self
 import kotlinx.coroutines.CoroutineDispatcher
-import com.ys.coil.memory.RequestService
-import com.ys.coil.size.PixelSize
-import com.ys.coil.fetch.Fetcher
-import com.ys.coil.target.ImageViewTarget
-import com.ys.coil.target.Target
 
 /** [LoadRequestBuilder] 및 [GetRequestBuilder]의 기본 클래스입니다. */
 @BuilderMarker

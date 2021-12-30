@@ -19,6 +19,7 @@ import com.ys.coil.map.FileMapper
 import com.ys.coil.map.HttpUriMapper
 import com.ys.coil.map.StringMapper
 import com.ys.coil.memory.*
+import com.ys.coil.memory.RequestService
 import com.ys.coil.network.NetworkObserver
 import com.ys.coil.request.*
 import com.ys.coil.size.PixelSize
@@ -139,7 +140,8 @@ internal class RealImageLoader(
 
                 measuredMapper.map(data, size)
             } else {
-                registry.getMapper(data)?.map(data) ?: data
+                val options = Options(context)
+                registry.getMapper(data)?.map(data, options) ?: data
             }
 
             // 캐시 키를 계산합니다.
