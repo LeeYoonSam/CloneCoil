@@ -60,12 +60,6 @@ internal class RealImageLoader(
         add(HttpUriMapper())
         add(FileMapper())
 
-        add(HttpUrlFetcher(okHttpClient))
-        add(UriFetcher(context))
-        add(ResourceFetcher(context, drawableDecoder))
-        add(DrawableFetcher(drawableDecoder))
-        add(BitmapFetcher(context))
-
         add(BitmapFactoryDecoder(context))
     }
 
@@ -304,7 +298,7 @@ internal class RealImageLoader(
                 )
             }
             is DrawableResult -> fetchResult
-            is SourceResultNew -> {
+            is SourceResult -> {
                 val decodeResult = try {
                     // 취소되었는지 확인하세요.
                     ensureActive()

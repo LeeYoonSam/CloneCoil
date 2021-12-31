@@ -4,7 +4,6 @@ import android.graphics.drawable.Drawable
 import com.ys.coil.ImageLoader
 import com.ys.coil.fetch.Fetcher
 import com.ys.coil.fetch.SourceResult
-import com.ys.coil.fetch.SourceResultNew
 import com.ys.coil.request.Options
 import okio.BufferedSource
 
@@ -34,6 +33,6 @@ fun interface DecoderNew {
          * @param options 이 요청에 대한 구성 옵션 세트.
          * @param imageLoader 이 요청을 실행하는 [ImageLoader]입니다.
          */
-        fun create(result: SourceResultNew, options: Options, imageLoader: ImageLoader): DecoderNew?
+        fun create(result: SourceResult, options: Options, imageLoader: ImageLoader): DecoderNew?
     }
 }

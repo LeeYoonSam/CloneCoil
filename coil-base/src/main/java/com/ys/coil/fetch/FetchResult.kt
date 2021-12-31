@@ -14,24 +14,11 @@ sealed class FetchResult
 /**
  * 관련 [Decoder]에서 사용되는 원시 [BufferedSource] 결과입니다.
  *
- * @param source [Decoder]에 의해 디코딩될 사용되지 않은 [BufferedSource]입니다.
- * @param mimeType [source]에 대한 선택적 MIME 유형입니다.
- * @param dataSource [source]가 로드된 위치입니다.
- */
-data class SourceResult(
-    val source: BufferedSource,
-    val mimeType: String?,
-    val dataSource: DataSource
-) : FetchResult()
-
-/**
- * 관련 [Decoder]에서 사용되는 원시 [BufferedSource] 결과입니다.
- *
  * @param source 읽을 [ImageSource]입니다.
  * @param mimeType [source]에 대한 선택적 MIME 유형입니다.
  * @param dataSource [source]가 로드된 위치입니다.
  */
-data class SourceResultNew(
+data class SourceResult(
     val source: ImageSource,
     val mimeType: String?,
     val dataSource: DataSource

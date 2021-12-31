@@ -17,7 +17,7 @@ import okio.BufferedSource
 class ComponentRegistry private constructor(
     private val mappers: MultiList<Class<*>, Mapper<*, *>>,
     private val measuredMappers: MultiList<Class<*>, MeasuredMapper<*, *>>,
-    private val fetchers: MultiList<Class<*>, Fetcher<*>>,
+    private val fetchers: MultiList<Class<*>, Fetcher>,
     private val decoders: List<Decoder>
 ) {
 
@@ -60,12 +60,12 @@ class ComponentRegistry private constructor(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> requireFetcher(data: T): Fetcher<T> {
+    fun <T : Any> requireFetcher(data: T): Fetcher {
         val result = fetchers.find { (type, loader) ->
-            type.isAssignableFrom(data::class.java) && (loader as Fetcher<Any>).handles(data)
+            type.isAssignableFrom(data::class.java)
         }
         checkNotNull(result) { "Unable to fetch data. No fetcher supports: $data" }
-        return result.second as Fetcher<T>
+        return result.second as Fetcher
     }
 
     fun <T : Any> requireDecoder(
@@ -84,7 +84,7 @@ class ComponentRegistry private constructor(
 
         private val mappers: MultiMutableList<Class<*>, Mapper<*, *>>
         private val measuredMappers: MultiMutableList<Class<*>, MeasuredMapper<*, *>>
-        private val fetchers: MultiMutableList<Class<*>, Fetcher<*>>
+        private val fetchers: MultiMutableList<Class<*>, Fetcher>
         private val decoders: MutableList<Decoder>
 
         constructor() {
@@ -117,13 +117,13 @@ class ComponentRegistry private constructor(
             measuredMappers += type to measuredMapper
         }
 
-        /** 사용자 정의 [Fetcher]를 추가합니다. */
-        inline fun <reified T : Any> add(fetcher: Fetcher<T>) = add(T::class.java, fetcher)
-
-        @PublishedApi
-        internal fun <T : Any> add(type: Class<T>, fetcher: Fetcher<T>) = apply {
-            fetchers += type to fetcher
-        }
+        // /** 사용자 정의 [Fetcher]를 추가합니다. */
+        // inline fun <reified T : Any> add(fetcher: Fetcher<T>) = add(T::class.java, fetcher)
+        //
+        // @PublishedApi
+        // internal fun <T : Any> add(type: Class<T>, fetcher: Fetcher<T>) = apply {
+        //     fetchers += type to fetcher
+        // }
 
         /** 사용자 정의 [Decoder]를 추가합니다. */
         fun add(decoder: Decoder) = apply {

@@ -10,7 +10,7 @@ import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.createBitmap
 import androidx.exifinterface.media.ExifInterface
 import com.ys.coil.ImageLoader
-import com.ys.coil.fetch.SourceResultNew
+import com.ys.coil.fetch.SourceResult
 import com.ys.coil.request.Options
 import com.ys.coil.size.PixelSize
 import com.ys.coil.util.toDrawable
@@ -228,7 +228,7 @@ class BitmapFactoryDecoderNew @JvmOverloads constructor(
 
         private val parallelismLock = Semaphore(maxParallelism)
 
-        override fun create(result: SourceResultNew, options: Options, imageLoader: ImageLoader): DecoderNew {
+        override fun create(result: SourceResult, options: Options, imageLoader: ImageLoader): DecoderNew {
             return BitmapFactoryDecoderNew(result.source, options, parallelismLock)
         }
 

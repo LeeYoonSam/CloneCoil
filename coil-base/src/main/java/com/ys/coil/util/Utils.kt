@@ -6,15 +6,23 @@ import android.content.pm.ApplicationInfo
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.ColorSpace
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.VectorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Looper
 import android.os.StatFs
+import android.webkit.MimeTypeMap
 import androidx.annotation.Px
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.ys.coil.DefaultRequestOptions
+import com.ys.coil.disk.DiskCache
 import com.ys.coil.request.Parameters
+import kotlinx.coroutines.CoroutineDispatcher
 import okhttp3.Headers
 import java.io.File
+import java.util.Optional
+import kotlin.coroutines.CoroutineContext
 
 /** Required for compatibility with API 25 and below. */
 internal val NULL_COLOR_SPACE: ColorSpace? = null
@@ -32,13 +40,48 @@ internal fun isMainThread() = Looper.myLooper() == Looper.getMainLooper()
 internal inline val Any.identityHashCode: Int
     get() = System.identityHashCode(this)
 
+@OptIn(ExperimentalStdlibApi::class)
+internal inline val CoroutineContext.dispatcher: CoroutineDispatcher
+    get() = get(CoroutineDispatcher) ?: error("Current context doesn't contain CoroutineDispatcher in it: $this")
+
 internal val Context.safeCacheDir: File get() = cacheDir.apply { mkdirs() }
+
+internal val Drawable.isVector: Boolean
+    get() = this is VectorDrawable || this is VectorDrawableCompat
+
+/**
+ * 특수 문자에 더 관대하도록 [MimeTypeMap.getFileExtensionFromUrl]에서 수정되었습니다.
+ */
+internal fun MimeTypeMap.getMimeTypeFromUrl(url: String?): String? {
+    if (url.isNullOrBlank()) {
+        return null
+    }
+
+    val extension = url
+        .substringBeforeLast('#') // Fragment 를 제거합니다.
+        .substringBeforeLast('?') // 쿼리를 제거합니다.
+        .substringAfterLast('/') // 마지막 경로 세그먼트를 가져옵니다.
+        .substringAfterLast('.', missingDelimiterValue = "") // 파일 확장자를 가져옵니다.
+
+    return getMimeTypeFromExtension(extension)
+}
 
 internal val Uri.firstPathSegment: String?
     get() = pathSegments.firstOrNull()
 
 internal val Configuration.nightMode: Int
     get() = uiMode and Configuration.UI_MODE_NIGHT_MASK
+
+internal fun DiskCache.Editor.abortQuietly() {
+    try {
+        abort()
+    } catch (_: Exception) {}
+}
+
+internal fun unsupported(): Nothing = error("Unsupported")
+
+/** A simple [Optional] replacement. */
+internal class Option<T : Any>(@JvmField val value: T?)
 
 internal object Utils {
     private const val CACHE_DIRECTORY_NAME = "image_cache"

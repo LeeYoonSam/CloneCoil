@@ -7,7 +7,7 @@ import android.os.Build.VERSION
 import androidx.test.core.app.ApplicationProvider
 import com.ys.coil.ImageLoader
 import com.ys.coil.decode.DataSource.DISK
-import com.ys.coil.fetch.SourceResultNew
+import com.ys.coil.fetch.SourceResult
 import com.ys.coil.request.Options
 import com.ys.coil.size.OriginalSize
 import com.ys.coil.size.PixelSize
@@ -234,7 +234,7 @@ class BitmapFactoryDecoderNewTest {
 	private fun decode(assetName: String, options: Options): DecodeResult = runBlocking {
 		val source = context.assets.open(assetName).source().buffer()
 		val decoder = decoderFactory.create(
-			result = SourceResultNew(
+			result = SourceResult(
 				source = ImageSource(source, context),
 				mimeType = null,
 				dataSource = DISK
