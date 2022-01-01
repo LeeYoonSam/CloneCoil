@@ -95,7 +95,11 @@ internal fun unsupported(): Nothing = error("Unsupported")
 internal class Option<T : Any>(@JvmField val value: T?)
 
 internal object Utils {
-    private const val CACHE_DIRECTORY_NAME = "image_cache"
+
+    private const val STANDARD_MEMORY_MULTIPLIER = 0.2
+    private const val LOW_MEMORY_MULTIPLIER = 0.15
+    private const val DEFAULT_MEMORY_CLASS_MEGABYTES = 256
+    private const val SINGLETON_DISK_CACHE_NAME = "image_cache"
 
     private const val MIN_DISK_CACHE_SIZE: Long = 10 * 1024 * 1024 // 10MB
     private const val MAX_DISK_CACHE_SIZE: Long = 250 * 1024 * 1024 // 250MB
@@ -103,7 +107,6 @@ internal object Utils {
     private const val DISK_CACHE_PERCENTAGE = 0.02
 
     private const val STANDARD_MULTIPLIER = 0.25
-    private const val LOW_MEMORY_MULTIPLIER = 0.15
 
     /** 주어진 너비, 높이 및 [Bitmap.Config]를 사용하여 [Bitmap]의 메모리 내 크기를 반환합니다. */
     fun calculateAllocationByteCount(@Px width: Int, @Px height: Int, config: Bitmap.Config?): Int {
@@ -126,7 +129,7 @@ internal object Utils {
     }
 
     fun getDefaultCacheDirectory(context: Context): File {
-        return File(context.cacheDir, CACHE_DIRECTORY_NAME).apply { mkdirs() }
+        return File(context.cacheDir, SINGLETON_DISK_CACHE_NAME).apply { mkdirs() }
     }
 
     /** Modified from Picasso. */
@@ -145,6 +148,26 @@ internal object Utils {
             return size.toLong().coerceIn(MIN_DISK_CACHE_SIZE, MAX_DISK_CACHE_SIZE)
         } catch (ignored: Exception) {
             MIN_DISK_CACHE_SIZE
+        }
+    }
+
+    fun calculateMemoryCacheSize(context: Context, percent: Double): Int {
+        val memoryClassMegabytes = try {
+            val activityManager: ActivityManager = context.requireSystemService()
+            val isLargeHeap = (context.applicationInfo.flags and ApplicationInfo.FLAG_LARGE_HEAP) != 0
+            if (isLargeHeap) activityManager.largeMemoryClass else activityManager.memoryClass
+        } catch (_: Exception) {
+            DEFAULT_MEMORY_CLASS_MEGABYTES
+        }
+        return (percent * memoryClassMegabytes * 1024 * 1024).toInt()
+    }
+
+    fun defaultMemoryCacheSizePercent(context: Context): Double {
+        return try {
+            val activityManager: ActivityManager = context.requireSystemService()
+            if (activityManager.isLowRamDevice) LOW_MEMORY_MULTIPLIER else STANDARD_MEMORY_MULTIPLIER
+        } catch (_: Exception) {
+            STANDARD_MEMORY_MULTIPLIER
         }
     }
 }

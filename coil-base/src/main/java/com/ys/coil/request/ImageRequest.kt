@@ -441,21 +441,21 @@ class ImageRequest private constructor(
 			this.data = data
 		}
 
-		// /**
-		//  * 이 요청에 대한 메모리 캐시 키를 설정합니다.
-		//  *
-		//  * null이거나 설정되지 않은 경우 [ImageLoader]는 메모리 캐시 키를 계산합니다.
-		//  */
-		// fun memoryCacheKey(key: String?) = memoryCacheKey(key?.let { MemoryCache.Key(it) })
-		//
-		// /**
-		//  * 이 요청에 대한 메모리 캐시 키를 설정합니다.
-		//  *
-		//  * null이거나 설정되지 않은 경우 [ImageLoader]는 메모리 캐시 키를 계산합니다.
-		//  */
-		// fun memoryCacheKey(key: MemoryCache.Key?) = apply {
-		// 	this.memoryCacheKey = key
-		// }
+		/**
+		 * 이 요청에 대한 메모리 캐시 키를 설정합니다.
+		 *
+		 * null이거나 설정되지 않은 경우 [ImageLoader]는 메모리 캐시 키를 계산합니다.
+		 */
+		fun memoryCacheKey(key: String?) = memoryCacheKey(key?.let { MemoryCache.Key(it) })
+
+		/**
+		 * 이 요청에 대한 메모리 캐시 키를 설정합니다.
+		 *
+		 * null이거나 설정되지 않은 경우 [ImageLoader]는 메모리 캐시 키를 계산합니다.
+		 */
+		fun memoryCacheKey(key: MemoryCache.Key?) = apply {
+			this.memoryCacheKey = key
+		}
 
 		/**
 		 * 이 요청에 대한 디스크 캐시 키를 설정합니다.
@@ -738,17 +738,17 @@ class ImageRequest private constructor(
 		 *
 		 * 메모리 캐시에 [key] 값이 없으면 [placeholder]로 대체합니다.
 		 */
-		// fun placeholderMemoryCacheKey(key: String?) =
-		// 	placeholderMemoryCacheKey(key?.let { MemoryCache.Key(it) })
+		fun placeholderMemoryCacheKey(key: String?) =
+			placeholderMemoryCacheKey(key?.let { MemoryCache.Key(it) })
 
 		/**
 		 * 값이 자리 표시자 드로어블로 사용될 메모리 캐시 [key]를 설정합니다.
 		 *
 		 * 메모리 캐시에 [key] 값이 없으면 [placeholder]로 대체합니다.
 		 */
-		// fun placeholderMemoryCacheKey(key: MemoryCache.Key?) = apply {
-		// 	this.placeholderMemoryCacheKey = key
-		// }
+		fun placeholderMemoryCacheKey(key: MemoryCache.Key?) = apply {
+			this.placeholderMemoryCacheKey = key
+		}
 
 		/**
 		 * 요청이 시작될 때 사용할 자리 표시자 드로어블을 설정합니다.
