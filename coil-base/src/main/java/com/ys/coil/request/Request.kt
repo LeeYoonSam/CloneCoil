@@ -6,7 +6,6 @@ import android.graphics.ColorSpace
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.lifecycle.Lifecycle
-import com.ys.coil.DefaultRequestOptions
 import com.ys.coil.decode.DataSource
 import com.ys.coil.size.Scale
 import com.ys.coil.size.SizeResolver

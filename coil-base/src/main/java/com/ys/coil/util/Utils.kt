@@ -10,19 +10,30 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 import android.net.Uri
 import android.os.Build
+import android.os.Build.VERSION
 import android.os.Looper
 import android.os.StatFs
 import android.webkit.MimeTypeMap
 import androidx.annotation.Px
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
-import com.ys.coil.DefaultRequestOptions
 import com.ys.coil.disk.DiskCache
+import com.ys.coil.request.DefaultRequestOptions
 import com.ys.coil.request.Parameters
 import kotlinx.coroutines.CoroutineDispatcher
 import okhttp3.Headers
 import java.io.File
 import java.util.Optional
 import kotlin.coroutines.CoroutineContext
+
+/**
+ * Prefer hardware bitmaps on API 26 and above since they are optimized for drawing without
+ * transformations.
+ */
+internal val DEFAULT_BITMAP_CONFIG = if (VERSION.SDK_INT >= 26) {
+    Bitmap.Config.HARDWARE
+} else {
+    Bitmap.Config.ARGB_8888
+}
 
 /** Required for compatibility with API 25 and below. */
 internal val NULL_COLOR_SPACE: ColorSpace? = null

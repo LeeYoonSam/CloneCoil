@@ -11,7 +11,6 @@ import androidx.annotation.Px
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import com.ys.coil.DefaultRequestOptions
 import com.ys.coil.annotation.BuilderMarker
 import com.ys.coil.decode.DataSource
 import com.ys.coil.drawable.CrossfadeDrawable

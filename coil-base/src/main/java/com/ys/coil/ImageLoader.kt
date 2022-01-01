@@ -2,6 +2,7 @@ package com.ys.coil
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import com.ys.coil.request.DefaultRequestOptions
 import com.ys.coil.request.GetRequest
 import com.ys.coil.request.LoadRequest
 import com.ys.coil.request.Request

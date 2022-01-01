@@ -2,10 +2,12 @@ package com.ys.coil.memory
 
 import android.content.ComponentCallbacks2.*
 import android.graphics.Bitmap
+import android.os.Parcelable
 import android.util.Log
 import androidx.collection.LruCache
 import com.ys.coil.util.getAllocationByteCountCompat
 import com.ys.coil.util.log
+import kotlinx.parcelize.Parcelize
 
 /**
  * 최근에 메모리에 로드된 [Bitmap]에 대한 LRU 캐시입니다.
@@ -18,6 +20,20 @@ internal class MemoryCache(
     companion object {
         private const val TAG = "MemoryCache"
     }
+
+    /**
+     * The cache key for an image in the memory cache.
+     *
+     * @param key The value returned by [Keyer.key] (or a custom value).
+     * @param extras Extra values that differentiate the associated
+     *  cached value from other values with the same [key]. This map
+     *  **must be** treated as immutable and should not be modified.
+     */
+    @Parcelize
+    data class Key(
+        val key: String,
+        val extras: Map<String, String> = emptyMap(),
+    ) : Parcelable
 
     private val cache = object : LruCache<String, Value>(maxSize) {
         override fun entryRemoved(

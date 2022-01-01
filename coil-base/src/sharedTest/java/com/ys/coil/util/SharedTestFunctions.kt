@@ -3,7 +3,7 @@ package com.ys.coil.util
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.ys.coil.DefaultRequestOptions
+import com.ys.coil.request.DefaultRequestOptions
 import com.ys.coil.decode.Options
 import com.ys.coil.request.CachePolicy
 import com.ys.coil.request.GetRequest

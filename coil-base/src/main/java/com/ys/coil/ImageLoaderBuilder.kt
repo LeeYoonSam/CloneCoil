@@ -7,6 +7,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.FloatRange
 import com.ys.coil.annotation.BuilderMarker
 import com.ys.coil.drawable.CrossfadeDrawable
+import com.ys.coil.request.DefaultRequestOptions
 import com.ys.coil.util.Utils
 import com.ys.coil.util.getDrawableCompat
 import kotlinx.coroutines.CoroutineDispatcher
