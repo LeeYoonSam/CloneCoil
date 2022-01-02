@@ -83,6 +83,15 @@ internal val Uri.firstPathSegment: String?
 internal val Configuration.nightMode: Int
     get() = uiMode and Configuration.UI_MODE_NIGHT_MASK
 
+internal fun String.toNonNegativeInt(defaultValue: Int): Int {
+    val value = toLongOrNull() ?: return defaultValue
+    return when {
+        value > Int.MAX_VALUE -> Int.MAX_VALUE
+        value < 0 -> 0
+        else -> value.toInt()
+    }
+}
+
 internal fun DiskCache.Editor.abortQuietly() {
     try {
         abort()
