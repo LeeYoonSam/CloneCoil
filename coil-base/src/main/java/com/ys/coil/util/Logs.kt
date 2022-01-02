@@ -7,7 +7,7 @@ import java.io.StringWriter
 /**
  * 내부 로깅에서 사용하는 이모티콘
  *
- * TODO: Some emojis require an extra space to display correctly in the logs. Figure out why.
+ * 일부 이모티콘은 logcat에 올바르게 표시하기 위해 추가 공간이 필요합니다. 이유를 모르겠습니다. 🤷
  */
 internal object Emoji {
     const val BRAIN = "🧠" + " "
@@ -28,5 +28,17 @@ internal fun log(tag: String, throwable: Throwable) {
         val writer = StringWriter()
         throwable.printStackTrace(PrintWriter(writer))
         Log.println(Log.ERROR, tag, writer.toString())
+    }
+}
+
+internal inline fun Logger.log(tag: String, priority: Int, lazyMessage: () -> String) {
+    if (level <= priority) {
+        log(tag, priority, lazyMessage(), null)
+    }
+}
+
+internal fun Logger.log(tag: String, throwable: Throwable) {
+    if (level <= Log.ERROR) {
+        log(tag, Log.ERROR, null, throwable)
     }
 }
