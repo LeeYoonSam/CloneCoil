@@ -160,8 +160,7 @@ class ImageRequest private constructor(
 	/** @see Builder.fallback */
 	val fallback: Drawable? get() =
 		getDrawableCompat(fallbackDrawable, fallbackResId, defaults.fallback)
-
-
+	
 	@JvmOverloads
 	fun newBuilder(context: Context = this.context) = Builder(this, context)
 
