@@ -8,29 +8,29 @@ import com.ys.coil.fetch.Fetcher
 import com.ys.coil.request.Parameters.Entry
 import com.ys.coil.util.mapNotNullValues
 
-/** A map of generic values that can be used to pass custom data to [Fetcher]s and [Decoder]s. */
+/** 사용자 지정 데이터를 [Fetcher] 및 [Decoder]에 전달하는 데 사용할 수 있는 일반 값의 맵입니다. */
 class Parameters private constructor(
     private val map: Map<String, Entry>
 ) : Iterable<Pair<String, Entry>> {
 
     constructor() : this(emptyMap())
 
-    /** Returns the number of parameters in this object. */
+    /** 이 개체의 매개변수 수를 반환합니다. */
     val size: Int @JvmName("size") get() = map.size
 
-    /** Returns the value associated with [key] or null if [key] has no mapping. */
+    /** [key]에 매핑이 없는 경우 [key] 또는 null과 관련된 값을 반환합니다. */
     fun value(key: String): Any? = map[key]?.value
 
-    /** Returns the cache key associated with [key] or null if [key] has no mapping. */
+    /** [key]에 매핑이 없는 경우 [key] 또는 null과 연결된 캐시 키를 반환합니다. */
     fun cacheKey(key: String): String? = map[key]?.cacheKey
 
-    /** Returns the entry associated with [key] or null if [key] has no mapping. */
+    /** [key]에 매핑이 없는 경우 [key] 또는 null과 관련된 항목을 반환합니다. */
     fun entry(key: String): Entry? = map[key]
 
-    /** Returns 'true' if this object has no parameters. */
+    /** 이 객체에 매개변수가 없으면 'true'를 반환합니다. */
     fun isEmpty(): Boolean = map.isEmpty()
 
-    /** Returns a map of keys to values. */
+    /** 값에 대한 키 맵을 반환합니다. */
     fun values(): Map<String, Any?> {
         return if (isEmpty()) {
             emptyMap()
@@ -39,7 +39,7 @@ class Parameters private constructor(
         }
     }
 
-    /** Returns a map of keys to non-null cache keys. Keys with a null cache key are filtered. */
+    /** null이 아닌 캐시 키에 대한 키 맵을 반환합니다. null 캐시 키가 있는 키는 필터링됩니다. */
     fun cacheKeys(): Map<String, String> {
         return if (isEmpty()) {
             emptyMap()
@@ -48,7 +48,7 @@ class Parameters private constructor(
         }
     }
 
-    /** Returns an [Iterator] over the entries in the [Parameters]. */
+    /** [Parameters]의 항목에 대해 [Iterator]를 반환합니다. */
     override operator fun iterator(): Iterator<Pair<String, Entry>> {
         return map.map { (key, value) -> key to value }.iterator()
     }
@@ -82,12 +82,12 @@ class Parameters private constructor(
         }
 
         /**
-         * Set a parameter.
+         * 매개변수를 설정합니다.
          *
-         * @param key The parameter's key.
-         * @param value The parameter's value.
-         * @param cacheKey The parameter's cache key.
-         *  If not null, this value will be added to a request's cache key.
+         * @param key 매개변수의 키입니다.
+         * @param value 매개변수의 값입니다.
+         * @param cacheKey 매개변수의 캐시 키입니다.
+         *  null이 아니면 이 값이 요청의 캐시 키에 추가됩니다.
          */
         @JvmOverloads
         fun set(key: String, value: Any?, cacheKey: String? = value?.toString()) = apply {
@@ -95,15 +95,15 @@ class Parameters private constructor(
         }
 
         /**
-         * Remove a parameter.
+         * 매개변수를 제거합니다.
          *
-         * @param key The parameter's key.
+         * @param key 매개변수의 키입니다.
          */
         fun remove(key: String) = apply {
             map.remove(key)
         }
 
-        /** Create a new [Parameters] instance. */
+        /** 새 [Parameters] 인스턴스를 만듭니다. */
         fun build() = Parameters(map.toMap())
     }
 
@@ -112,11 +112,11 @@ class Parameters private constructor(
     }
 }
 
-/** Returns the number of parameters in this object. */
+/** 이 개체의 매개변수 수를 반환합니다. */
 inline fun Parameters.count(): Int = size
 
-/** Return true when the set contains elements. */
+/** 집합에 요소가 포함되어 있으면 true를 반환합니다. */
 inline fun Parameters.isNotEmpty(): Boolean = !isEmpty()
 
-/** Returns the value associated with [key] or null if [key] has no mapping. */
+/** [key]에 매핑이 없는 경우 [key] 또는 null과 관련된 값을 반환합니다. */
 inline operator fun Parameters.get(key: String): Any? = value(key)
