@@ -11,7 +11,7 @@ import androidx.collection.arraySetOf
 import com.ys.coil.R
 import com.ys.coil.decode.DataSource
 import com.ys.coil.memory.MemoryCache
-import com.ys.coil.memory.ViewTargetRequestManager
+import com.ys.coil.request.ViewTargetRequestManager
 import com.ys.coil.size.Scale
 import com.ys.coil.target.ViewTarget
 import kotlinx.coroutines.suspendCancellableCoroutine

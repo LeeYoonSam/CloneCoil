@@ -13,17 +13,40 @@ import android.os.Build
 import android.os.Build.VERSION
 import android.os.Looper
 import android.os.StatFs
+import android.view.View
 import android.webkit.MimeTypeMap
 import androidx.annotation.Px
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
+import com.ys.coil.R
 import com.ys.coil.disk.DiskCache
 import com.ys.coil.request.DefaultRequestOptions
 import com.ys.coil.request.Parameters
+import com.ys.coil.request.ViewTargetRequestManager
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import okhttp3.Headers
 import java.io.File
 import java.util.Optional
 import kotlin.coroutines.CoroutineContext
+
+internal val View.requestManager: ViewTargetRequestManager
+    get() {
+        var manager = getTag(R.id.coil_request_manager) as? ViewTargetRequestManager
+        if (manager == null) {
+            manager = synchronized(this) {
+                // Check again in case coil_request_manager was just set.
+                (getTag(R.id.coil_request_manager) as? ViewTargetRequestManager)
+                    ?.let { return@synchronized it }
+
+                ViewTargetRequestManager(this).apply {
+                    addOnAttachStateChangeListener(this)
+                    setTag(R.id.coil_request_manager, this)
+                }
+            }
+        }
+        return manager
+    }
 
 /**
  * Prefer hardware bitmaps on API 26 and above since they are optimized for drawing without
@@ -54,6 +77,15 @@ internal inline val Any.identityHashCode: Int
 @OptIn(ExperimentalStdlibApi::class)
 internal inline val CoroutineContext.dispatcher: CoroutineDispatcher
     get() = get(CoroutineDispatcher) ?: error("Current context doesn't contain CoroutineDispatcher in it: $this")
+
+@OptIn(ExperimentalCoroutinesApi::class)
+internal fun <T> Deferred<T>.getCompletedOrNull(): T? {
+    return try {
+        getCompleted()
+    } catch (_: Throwable) {
+        null
+    }
+}
 
 internal val Context.safeCacheDir: File get() = cacheDir.apply { mkdirs() }
 
