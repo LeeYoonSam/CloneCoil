@@ -45,6 +45,12 @@ import okhttp3.HttpUrl
 import java.io.File
 import java.nio.ByteBuffer
 
+/**
+ * 이미지에 대한 요청을 나타내는 변경할 수 없는 값 개체입니다.
+ *
+ * @see ImageLoader.enqueue
+ * @see ImageLoader.execute
+ */
 class ImageRequest private constructor(
 	val context: Context,
 
@@ -411,7 +417,7 @@ class ImageRequest private constructor(
 			fallbackResId = request.fallbackResId
 			fallbackDrawable = request.fallbackDrawable
 
-			// If the context changes, recompute the resolved values.
+			// 컨텍스트가 변경되면 확인된 값을 다시 계산합니다.
 			if (request.context === context) {
 				resolvedLifecycle = request.lifecycle
 				resolvedSizeResolver = request.sizeResolver
