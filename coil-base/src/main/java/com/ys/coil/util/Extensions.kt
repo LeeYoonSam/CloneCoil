@@ -11,6 +11,7 @@ import androidx.collection.arraySetOf
 import com.ys.coil.R
 import com.ys.coil.decode.DataSource
 import com.ys.coil.memory.MemoryCache
+import com.ys.coil.memory.MemoryCache.Key
 import com.ys.coil.request.ViewTargetRequestManager
 import com.ys.coil.size.Scale
 import com.ys.coil.target.ViewTarget
@@ -89,17 +90,8 @@ internal fun Closeable.closeQuietly() {
     } catch (ignored: Exception) {}
 }
 
-internal fun MemoryCache.getValue(key: String?): MemoryCache.Value? {
+internal fun MemoryCache.getValue(key: Key?): MemoryCache.Value? {
     return key?.let { get(it) }
-}
-
-internal fun MemoryCache.putValue(key: String?, value: Drawable, isSampled: Boolean) {
-    if (key != null) {
-        val bitmap = (value as? BitmapDrawable)?.bitmap
-        if (bitmap != null) {
-            set(key, bitmap, isSampled)
-        }
-    }
 }
 
 internal inline fun <T> takeIf(take: Boolean, factory: () -> T): T? {
@@ -119,7 +111,7 @@ internal val ViewTarget<*>.requestManager: ViewTargetRequestManager
     get() {
         var manager = view.getTag(R.id.coil_request_manager) as? ViewTargetRequestManager
         if (manager == null) {
-            manager = ViewTargetRequestManager().apply {
+            manager = ViewTargetRequestManager(view).apply {
                 view.addOnAttachStateChangeListener(this)
                 view.setTag(R.id.coil_request_manager, this)
             }
