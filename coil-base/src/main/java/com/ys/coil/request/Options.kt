@@ -15,86 +15,81 @@ import com.ys.coil.util.NULL_COLOR_SPACE
 import okhttp3.Headers
 
 /**
- * A set of configuration options for fetching and decoding an image.
- * [Fetcher]s and [Decoder]s should respect these options as best as possible.
+ * 이미지를 가져오고 디코딩하기 위한 구성 옵션 집합입니다.
+ * [Fetcher] 및 [Decoder]는 이러한 옵션을 최대한 존중해야 합니다.
  */
 class Options(
     /**
-     * The [Context] used to execute this request.
+     * 이 요청을 실행하는 데 사용되는 [Context]입니다.
      */
     val context: Context,
 
     /**
-     * The requested config for any [Bitmap]s.
+     * 모든 [Bitmap]에 대해 요청된 구성입니다.
      */
     val config: Bitmap.Config = Bitmap.Config.ARGB_8888,
 
     /**
-     * The preferred color space for any [Bitmap]s.
-     * If 'null', components should typically default to [ColorSpace.Rgb].
+     * 모든 [Bitmap]에 대한 기본 색상 공간입니다.
+     * 'null'인 경우 구성 요소는 일반적으로 [ColorSpace.Rgb]로 기본 설정되어야 합니다.
      */
     val colorSpace: ColorSpace? = NULL_COLOR_SPACE,
 
     /**
-     * The requested output size for the image request.
+     * 이미지 요청에 대해 요청된 출력 크기입니다.
      */
     val size: Size = OriginalSize,
 
     /**
-     * The scaling algorithm for how to fit the source image's dimensions into the target's
-     * dimensions.
+     * 소스 이미지의 치수를 대상의 치수에 맞추는 방법에 대한 크기 조정 알고리즘입니다.
      */
     val scale: Scale = Scale.FIT,
 
     /**
-     * 'true' if the output image does not need to fit/fill the target's dimensions exactly.
-     * For instance, if 'true' [BitmapFactoryDecoder] will not decode an image at a larger size
-     * than its source dimensions as an optimization.
+     * 출력 이미지가 대상의 치수에 정확히 맞거나 채울 필요가 없으면 'true'입니다.
+     * 예를 들어, 'true'인 경우 [BitmapFactoryDecoder]는 최적화로 소스 크기보다 큰 크기의 이미지를 디코딩하지 않습니다.
      */
     val allowInexactSize: Boolean = false,
 
     /**
-     * 'true' if a component is allowed to use [Bitmap.Config.RGB_565] as an optimization.
-     * As RGB_565 does not have an alpha channel, components should only use RGB_565 if the
-     * image is guaranteed to not use alpha.
+     * 구성 요소가 [Bitmap.Config.RGB_565]를 최적화로 사용할 수 있는 경우 'true'입니다.
+     * RGB_565에는 알파 채널이 없으므로 구성 요소는 이미지가 알파를 사용하지 않는 것이 보장되는 경우에만 RGB_565를 사용해야 합니다.
      */
     val allowRgb565: Boolean = false,
 
     /**
-     * 'true' if the color (RGB) channels of the decoded image should be pre-multiplied by the
-     * alpha channel. The default behavior is to enable pre-multiplication but in some environments
-     * it can be necessary to disable this feature to leave the source pixels unmodified.
+     * 디코딩된 이미지의 색상(RGB) 채널에 알파 채널을 미리 곱해야 하는 경우 'true'입니다.
+     * 기본 동작은 사전 곱셈을 활성화하는 것이지만 일부 환경에서는 소스 픽셀을 수정하지 않은 상태로 두려면 이 기능을 비활성화해야 할 수 있습니다.
      */
     val premultipliedAlpha: Boolean = true,
 
     /**
-     * The cache key to use when persisting images to the disk cache or 'null' if the component can
-     * compute its own.
+     * 이미지를 디스크 캐시에 유지할 때 사용할 캐시 키 또는 구성 요소가 자체적으로 계산할 수 있는 경우 'null'입니다.
      */
     val diskCacheKey: String? = null,
 
     /**
-     * The header fields to use for any network requests.
+     * 모든 네트워크 요청에 사용할 헤더 필드입니다.
      */
     val headers: Headers = EMPTY_HEADERS,
 
     /**
-     * A map of custom parameters. These are used to pass custom data to a component.
+     * 맞춤 매개변수의 맵입니다. 이들은 사용자 정의 데이터를 구성 요소에 전달하는 데 사용됩니다.
      */
     val parameters: Parameters = Parameters.EMPTY,
 
     /**
-     * Determines if this request is allowed to read/write from/to memory.
+     * 이 요청이 메모리에서/메모리로 읽기/쓰기가 허용되는지 여부를 결정합니다.
      */
     val memoryCachePolicy: CachePolicy = CachePolicy.ENABLED,
 
     /**
-     * Determines if this request is allowed to read/write from/to disk.
+     * 이 요청이 디스크에서/디스크로 읽기/쓰기가 허용되는지 여부를 결정합니다.
      */
     val diskCachePolicy: CachePolicy = CachePolicy.ENABLED,
 
     /**
-     * Determines if this request is allowed to read from the network.
+     * 이 요청이 네트워크에서 읽을 수 있는지 여부를 결정합니다.
      */
     val networkCachePolicy: CachePolicy = CachePolicy.ENABLED,
 ) {
