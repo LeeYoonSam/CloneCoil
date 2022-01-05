@@ -1,91 +1,99 @@
 package com.ys.coil.memory
 
+import androidx.annotation.MainThread
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.ys.coil.ImageLoader
-import com.ys.coil.request.LoadRequest
-import kotlinx.coroutines.CoroutineDispatcher
+import com.ys.coil.request.ImageRequest
+import com.ys.coil.target.ViewTarget
+import com.ys.coil.util.removeAndAddObserver
+import com.ys.coil.util.requestManager
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 
 internal sealed class RequestDelegate : DefaultLifecycleObserver {
 
     /**
-     * 동일한 매개변수로 이 요청을 반복하십시오.
+     * 시작하기 전에 이 요청을 취소해야 하는 경우 [CancellationException]을 throw합니다.
      */
-    open fun restart() {}
+    open fun assertActive() {}
 
     /**
-     * 이 delegate 와 관련된 자원 해지
+     * 모든 수명 주기 관찰자를 등록합니다.
+     */
+    open fun start() {}
+
+    /**
+     * 이 요청의 작업이 취소되거나 성공/실패할 때 호출됩니다.
+     */
+    open fun complete() {}
+
+    /**
+     * 이 요청의 작업을 취소하고 모든 수명 주기 관찰자를 지웁니다.
      */
     open fun dispose() {}
-
-    /**
-     * 로드가 완료되면 호출됩니다.
-     */
-    open fun onComplete() {}
 }
 
 /**
- * 빈 요청 delegate
- */
-internal object EmptyRequestDelegate : RequestDelegate()
-
-/**
- * 재시작을 지원하지 않는 단순 요청 delegate.
+ * 대상이 없거나 [ViewTarget]이 아닌 일회성 요청에 대한 요청 대리자입니다.
  */
 internal class BaseRequestDelegate(
     private val lifecycle: Lifecycle,
-    private val dispatcher: CoroutineDispatcher,
     private val job: Job
 ) : RequestDelegate() {
 
-    override fun dispose() = job.cancel()
+    override fun start() {
+        lifecycle.addObserver(this)
+    }
 
-    override fun onComplete() {
-        if (dispatcher is LifecycleObserver) {
-            lifecycle.removeObserver(dispatcher)
-        }
+    override fun complete() {
         lifecycle.removeObserver(this)
     }
+
+    override fun dispose() = job.cancel()
 
     override fun onDestroy(owner: LifecycleOwner) = dispose()
 }
 
-/**
- * 연결된 뷰가 있고 재시작을 지원하는 요청 delegate.
- *
- * @see ViewTargetRequestManager
- */
+/** [ViewTarget]이 있는 재시작 가능한 요청에 대한 요청 대리자. */
 internal class ViewTargetRequestDelegate(
-    private val loader: ImageLoader,
-    internal val request: LoadRequest,
-    private val target: TargetDelegate,
+    private val imageLoader: ImageLoader,
+    private val initialRequest: ImageRequest,
+    private val target: ViewTarget<*>,
     private val lifecycle: Lifecycle,
-    private val dispatcher: CoroutineDispatcher,
     private val job: Job
 ) : RequestDelegate() {
 
-    override fun restart() {
-        loader.load(request)
+    /**
+     * 동일한 [ImageRequest]로 이 요청을 반복합니다.
+     */
+    @MainThread
+    fun restart() {
+        imageLoader.enqueue(initialRequest)
+    }
+
+    override fun assertActive() {
+        if (!target.view.isAttachedToWindow) {
+            target.view.requestManager.setRequest(this)
+            throw CancellationException("'ViewTarget.view' must be attached to a window.")
+        }
+    }
+
+    override fun start() {
+        lifecycle.addObserver(this)
+        if (target is LifecycleObserver) lifecycle.removeAndAddObserver(target)
+        target.view.requestManager.setRequest(this)
     }
 
     override fun dispose() {
         job.cancel()
-        target.clear()
-
-        if (request.target is LifecycleObserver) {
-            lifecycle.removeObserver(request.target)
-        }
+        if (target is LifecycleObserver) lifecycle.removeObserver(target)
         lifecycle.removeObserver(this)
     }
 
-    override fun onComplete() {
-        if (dispatcher is LifecycleObserver) {
-            lifecycle.removeObserver(dispatcher)
-        }
+    override fun onDestroy(owner: LifecycleOwner) {
+        target.view.requestManager.dispose()
     }
-
-    override fun onDestroy(owner: LifecycleOwner) = dispose()
 }
