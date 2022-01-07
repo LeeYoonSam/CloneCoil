@@ -9,11 +9,11 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleObserver
-import com.ys.coil.bitmappool.RealBitmapPool
+import com.ys.coil.ImageLoader.Builder
 import com.ys.coil.decode.BitmapFactoryDecoder
 import com.ys.coil.decode.DataSource
-import com.ys.coil.decode.DrawableDecoderService
 import com.ys.coil.decode.EmptyDecoder
+import com.ys.coil.disk.DiskCache
 import com.ys.coil.fetch.*
 import com.ys.coil.map.FileMapper
 import com.ys.coil.map.HttpUriMapper
@@ -29,30 +29,37 @@ import com.ys.coil.target.ViewTarget
 import com.ys.coil.transform.Transformation
 import com.ys.coil.util.*
 import kotlinx.coroutines.*
-import okhttp3.OkHttpClient
+import okhttp3.Call
 
 internal class RealImageLoader(
-    private val context: Context,
+    val context: Context,
     override val defaults: DefaultRequestOptions,
-    bitmapPoolSize: Long,
-    memoryCacheSize: Int,
-    okHttpClient: OkHttpClient,
-    registry: ComponentRegistry
+    val memoryCacheLazy: Lazy<MemoryCache?>,
+    val diskCacheLazy: Lazy<DiskCache?>,
+    val callFactoryLazy: Lazy<Call.Factory>,
+    val eventListenerFactory: EventListener.Factory,
+    val componentRegistry: ComponentRegistry,
+    val options: ImageLoaderOptions,
+    val logger: Logger?
 ) : ImageLoader, ComponentCallbacks {
-
-    companion object {
-        private const val TAG = "RealImageLoader"
-    }
 
     private val loaderScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable -> log(TAG, throwable) }
 
-    private val bitmapPool = RealBitmapPool(bitmapPoolSize)
-    private val referenceCounter = BitmapReferenceCounter(bitmapPool)
-    private val delegateService = DelegateService(this, referenceCounter)
     private val requestService = RequestService()
-    private val drawableDecoder = DrawableDecoderService(context, bitmapPool)
-    private val memoryCache = MemoryCache(referenceCounter, memoryCacheSize)
+    override val memoryCache by memoryCacheLazy
+    override val diskCache by diskCacheLazy
+
+    override val components = componentRegistry.newBuilder().build()
+
+    override fun enqueue(request: ImageRequest): Disposable {
+        TODO("Not yet implemented")
+    }
+
+    override fun execute(request: ImageRequest): ImageResult {
+        TODO("Not yet implemented")
+    }
+
     private val networkObserver = NetworkObserver(context)
 
     private val registry = ComponentRegistry(registry) {
@@ -367,11 +374,21 @@ internal class RealImageLoader(
         clearMemory()
     }
 
+    override fun newBuilder(): Builder {
+        TODO("Not yet implemented")
+    }
+
     private fun Request.isDiskPreload(): Boolean {
         return this is LoadRequest && target == null && !memoryCachePolicy.writeEnabled
     }
 
     private fun assertNotShutdown() {
         check(!isShutdown) { "The image loader is shutdown!" }
+    }
+
+    companion object {
+        private const val TAG = "RealImageLoader"
+        private const val REQUEST_TYPE_ENQUEUE = 0
+        private const val REQUEST_TYPE_EXECUTE = 1
     }
 }

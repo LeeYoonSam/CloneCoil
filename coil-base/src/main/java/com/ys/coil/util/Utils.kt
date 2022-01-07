@@ -142,6 +142,14 @@ internal object Utils {
     private const val DEFAULT_MEMORY_CLASS_MEGABYTES = 256
     private const val SINGLETON_DISK_CACHE_NAME = "image_cache"
 
+    /**
+     * 디스크 캐시의 싱글톤 인스턴스를 보유합니다.
+     * 디스크 캐시 디렉토리를 지정하지 않고 여러 [ImageLoader] 생성을 지원하려면 싱글톤 디스크 캐시 인스턴스가 필요합니다.
+     *
+     * @see DiskCache.Builder.directory
+     */
+    private var singletonDiskCache: DiskCache? = null
+
     private const val MIN_DISK_CACHE_SIZE: Long = 10 * 1024 * 1024 // 10MB
     private const val MAX_DISK_CACHE_SIZE: Long = 250 * 1024 * 1024 // 250MB
 
@@ -209,6 +217,17 @@ internal object Utils {
             if (activityManager.isLowRamDevice) LOW_MEMORY_MULTIPLIER else STANDARD_MEMORY_MULTIPLIER
         } catch (_: Exception) {
             STANDARD_MEMORY_MULTIPLIER
+        }
+    }
+
+    @Synchronized
+    fun singletonDiskCache(context: Context): DiskCache {
+        return singletonDiskCache ?: run {
+            // 싱글톤 디스크 캐시 인스턴스를 만듭니다.
+            DiskCache.Builder(context)
+                .directory(context.safeCacheDir.resolve(SINGLETON_DISK_CACHE_NAME))
+                .build()
+                .also { singletonDiskCache = it }
         }
     }
 }
