@@ -3,7 +3,6 @@
 
 package com.ys.coil.request
 
-import com.ys.coil.decode.Decoder
 import com.ys.coil.fetch.Fetcher
 import com.ys.coil.request.Parameters.Entry
 import com.ys.coil.util.mapNotNullValues

@@ -2,7 +2,7 @@ package com.ys.coil.util
 
 import com.ys.coil.ImageLoader
 import com.ys.coil.RealImageLoader
-import com.ys.coil.decode.BitmapFactoryDecoderNew.Companion.DEFAULT_MAX_PARALLELISM
+import com.ys.coil.decode.BitmapFactoryDecoder.Companion.DEFAULT_MAX_PARALLELISM
 
 /**
  * [RealImageLoader]에서 사용하는 개인 구성 옵션입니다.

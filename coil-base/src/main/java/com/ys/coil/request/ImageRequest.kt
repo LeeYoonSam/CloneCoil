@@ -16,7 +16,7 @@ import androidx.annotation.Px
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import com.ys.coil.decode.DecoderNew
+import com.ys.coil.decode.Decoder
 import com.ys.coil.fetch.Fetcher
 import com.ys.coil.lifecycle.GlobalLifecycle
 import com.ys.coil.memory.MemoryCache
@@ -76,7 +76,7 @@ class ImageRequest private constructor(
 	val fetcherFactory: Pair<Fetcher.Factory<*>, Class<*>>?,
 
 	/** @see Builder.decoderFactory */
-	val decoderFactory: DecoderNew.Factory?,
+	val decoderFactory: Decoder.Factory?,
 
 	/** @see Builder.transformations */
 	val transformations: List<Transformation>,
@@ -296,7 +296,7 @@ class ImageRequest private constructor(
 		private var diskCacheKey: String?
 		private var colorSpace: ColorSpace? = null
 		private var fetcherFactory: Pair<Fetcher.Factory<*>, Class<*>>?
-		private var decoderFactory: DecoderNew.Factory?
+		private var decoderFactory: Decoder.Factory?
 		private var transformations: List<Transformation>
 
 		private var headers: Headers.Builder?
@@ -621,7 +621,7 @@ class ImageRequest private constructor(
 		 *
 		 * 이것이 null이거나 설정되지 않은 경우 [ImageLoader]는 [ComponentRegistry]에서 해당 디코더를 찾습니다.
 		 */
-		fun decoderFactory(factory: DecoderNew.Factory) = apply {
+		fun decoderFactory(factory: Decoder.Factory) = apply {
 			this.decoderFactory = factory
 		}
 
@@ -986,7 +986,7 @@ class ImageRequest private constructor(
 			replaceWith = ReplaceWith("decoderFactory { _, _, _ -> decoder }"),
 			level = DeprecationLevel.ERROR // Temporary migration aid.
 		)
-		fun decoder(decoder: DecoderNew): Builder = unsupported()
+		fun decoder(decoder: Decoder): Builder = unsupported()
 
 		@Deprecated(
 			message = "Migrate to 'transitionFactory'.",

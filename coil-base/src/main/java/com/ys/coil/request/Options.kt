@@ -4,8 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ColorSpace
 import android.os.Build.VERSION.SDK_INT
-import com.ys.coil.decode.BitmapFactoryDecoder
-import com.ys.coil.decode.Decoder
 import com.ys.coil.fetch.Fetcher
 import com.ys.coil.size.OriginalSize
 import com.ys.coil.size.Scale

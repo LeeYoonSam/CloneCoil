@@ -7,8 +7,6 @@ import androidx.core.graphics.decodeDrawable
 import com.ys.coil.bitmappool.BitmapPool
 import com.ys.coil.decode.DecodeResult
 import com.ys.coil.decode.DecodeUtils
-import com.ys.coil.decode.Decoder
-import com.ys.coil.decode.Options
 import com.ys.coil.size.PixelSize
 import com.ys.coil.size.Size
 import okio.BufferedSource

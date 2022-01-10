@@ -2,6 +2,7 @@ package com.ys.coil
 
 import com.ys.coil.decode.Decoder
 import com.ys.coil.fetch.Fetcher
+import com.ys.coil.fetch.SourceResult
 import com.ys.coil.interceptor.Interceptor
 import com.ys.coil.key.Keyer
 import com.ys.coil.map.Mapper
@@ -25,9 +26,9 @@ class ComponentRegistry private constructor(
     val mappers: List<Pair<Mapper<out Any, out Any>, Class<out Any>>>,
     val keyers: List<Pair<Keyer<out Any>, Class<out Any>>>,
     val fetcherFactories: List<Pair<Fetcher.Factory<out Any>, Class<out Any>>>,
-    // val decoderFactories: List<Decoder.Factory>
+    val decoderFactories: List<Decoder.Factory>
 ) {
-    constructor() : this(emptyList(), emptyList(), emptyList(), emptyList())
+    constructor() : this(emptyList(), emptyList(), emptyList(), emptyList(), emptyList())
 
     /**
      * 등록된 [mappers]를 사용하여 [data]를 변환합니다.
@@ -81,26 +82,26 @@ class ComponentRegistry private constructor(
         return null
     }
 
-    // /**
-    //  * 등록된 [decoderFactories]를 이용하여 새로운 [Decoder]를 생성합니다.
-    //  *
-    //  * @return 첫 번째 요소가 새로운 [Decoder]이고 두 번째 요소가 이를 생성한 [decoderFactories]의 팩토리 인덱스인 [Pair].
-    //  * [result]에 대해 [Decoder]를 생성할 수 없는 경우 'null'을 반환합니다.
-    //  */
-    // @JvmOverloads
-    // fun newDecoder(
-    //     result: SourceResult,
-    //     options: Options,
-    //     imageLoader: ImageLoader,
-    //     startIndex: Int = 0
-    // ): Pair<Decoder, Int>? {
-    //     for (index in startIndex until decoderFactories.size) {
-    //         val factory = decoderFactories[index]
-    //         val decoder = factory.create(result, options, imageLoader)
-    //         if (decoder != null) return decoder to index
-    //     }
-    //     return null
-    // }
+    /**
+     * 등록된 [decoderFactories]를 이용하여 새로운 [Decoder]를 생성합니다.
+     *
+     * @return 첫 번째 요소가 새로운 [Decoder]이고 두 번째 요소가 이를 생성한 [decoderFactories]의 팩토리 인덱스인 [Pair].
+     * [result]에 대해 [Decoder]를 생성할 수 없는 경우 'null'을 반환합니다.
+     */
+    @JvmOverloads
+    fun newDecoder(
+        result: SourceResult,
+        options: Options,
+        imageLoader: ImageLoader,
+        startIndex: Int = 0
+    ): Pair<Decoder, Int>? {
+        for (index in startIndex until decoderFactories.size) {
+            val factory = decoderFactories[index]
+            val decoder = factory.create(result, options, imageLoader)
+            if (decoder != null) return decoder to index
+        }
+        return null
+    }
 
     fun newBuilder() = Builder(this)
 
@@ -110,14 +111,14 @@ class ComponentRegistry private constructor(
         internal val mappers: MutableList<Pair<Mapper<out Any, *>, Class<out Any>>>
         internal val keyers: MutableList<Pair<Keyer<out Any>, Class<out Any>>>
         internal val fetcherFactories: MutableList<Pair<Fetcher.Factory<out Any>, Class<out Any>>>
-        // internal val decoderFactories: MutableList<Decoder.Factory>
+        internal val decoderFactories: MutableList<Decoder.Factory>
 
         constructor() {
             interceptors = mutableListOf()
             mappers = mutableListOf()
             keyers = mutableListOf()
             fetcherFactories = mutableListOf()
-            // decoderFactories = mutableListOf()
+            decoderFactories = mutableListOf()
         }
 
         constructor(registry: ComponentRegistry) {
@@ -125,7 +126,7 @@ class ComponentRegistry private constructor(
             mappers = registry.mappers.toMutableList()
             keyers = registry.keyers.toMutableList()
             fetcherFactories = registry.fetcherFactories.toMutableList()
-            // decoderFactories = registry.decoderFactories.toMutableList()
+            decoderFactories = registry.decoderFactories.toMutableList()
         }
 
         /** 사용자 정의 [Mapper]를 추가합니다. */
@@ -151,10 +152,10 @@ class ComponentRegistry private constructor(
             fetcherFactories += factory to type
         }
 
-        // /** [Decoder.Factory]를 등록합니다. */
-        // fun add(factory: Decoder.Factory) = apply {
-        //     decoderFactories += factory
-        // }
+        /** [Decoder.Factory]를 등록합니다. */
+        fun add(factory: Decoder.Factory) = apply {
+            decoderFactories += factory
+        }
 
         fun build(): ComponentRegistry {
             return ComponentRegistry(
@@ -162,7 +163,7 @@ class ComponentRegistry private constructor(
                 mappers.toImmutableList(),
                 keyers.toImmutableList(),
                 fetcherFactories.toImmutableList(),
-                // decoderFactories.toImmutableList()
+                decoderFactories.toImmutableList()
             )
         }
     }

@@ -7,7 +7,6 @@ import android.widget.ImageView
 import androidx.annotation.MainThread
 import androidx.lifecycle.Lifecycle
 import com.ys.coil.ImageLoader
-import com.ys.coil.decode.Options
 import com.ys.coil.lifecycle.GlobalLifecycle
 import com.ys.coil.lifecycle.LifecycleCoroutineDispatcher
 import com.ys.coil.request.CachePolicy

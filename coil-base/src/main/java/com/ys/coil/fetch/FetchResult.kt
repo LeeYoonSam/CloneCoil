@@ -2,7 +2,6 @@ package com.ys.coil.fetch
 
 import android.graphics.drawable.Drawable
 import com.ys.coil.decode.DataSource
-import com.ys.coil.decode.Decoder
 import com.ys.coil.decode.ImageSource
 import okio.BufferedSource
 

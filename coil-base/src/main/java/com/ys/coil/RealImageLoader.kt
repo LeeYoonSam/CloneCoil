@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.MainThread
 import com.ys.coil.ImageLoader.Builder
+import com.ys.coil.decode.BitmapFactoryDecoder
 import com.ys.coil.disk.DiskCache
 import com.ys.coil.fetch.*
 import com.ys.coil.interceptor.EngineInterceptor
@@ -66,7 +67,7 @@ internal class RealImageLoader(
         .add(BitmapFetcher.Factory())
         .add(ByteBufferFetcher.Factory())
         // Decoders
-        // .add(BitmapFactoryDecoder.Factory(options.bitmapFactoryMaxParallelism))
+        .add(BitmapFactoryDecoder.Factory(options.bitmapFactoryMaxParallelism))
         .build()
 
     private val interceptors = components.interceptors +
@@ -184,7 +185,7 @@ internal class RealImageLoader(
         memoryCache?.clear()
     }
 
-    override fun newBuilder(): Builder = ImageLoader.Builder(this)
+    override fun newBuilder(): Builder = Builder(this)
 
     private fun onSuccess(
         result: SuccessResult,

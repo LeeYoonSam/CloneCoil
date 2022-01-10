@@ -9,8 +9,6 @@ import android.os.Build.VERSION_CODES
 import com.ys.coil.bitmappool.BitmapPool
 import com.ys.coil.decode.DecodeResult
 import com.ys.coil.decode.DecodeUtils
-import com.ys.coil.decode.Decoder
-import com.ys.coil.decode.Options
 import com.ys.coil.gif.drawable.MovieDrawable
 import com.ys.coil.size.Size
 import okio.BufferedSource

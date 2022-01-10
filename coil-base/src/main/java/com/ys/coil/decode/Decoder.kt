@@ -1,44 +1,38 @@
 package com.ys.coil.decode
 
-import com.ys.coil.bitmappool.BitmapPool
-import com.ys.coil.size.Size
+import android.graphics.drawable.Drawable
+import com.ys.coil.ImageLoader
+import com.ys.coil.fetch.Fetcher
+import com.ys.coil.fetch.SourceResult
+import com.ys.coil.request.Options
 import okio.BufferedSource
 
 /**
- * [BufferedSource]를 [Drawable]로 변환합니다.
+ * [Decoder]는 [SourceResult]를 [Drawable]로 변환합니다.
  *
  * 이 인터페이스를 사용하여 사용자 지정 파일 형식(예: GIF, SVG, TIFF 등)에 대한 지원을 추가합니다.
  */
-interface Decoder {
+fun interface Decoder {
 
     /**
-     * 이 디코더가 [source] 디코딩을 지원하면 true를 반환합니다.
-     *
-     * 구현은 소스를 소비하지 **않으면 안됩니다**. 그러면 [handles] 및 [decode]에 대한 후속 호출이 실패할 수 있습니다.
-     *
-     * [BufferedSource.peek], [BufferedSource.rangeEquals] 또는 기타 비파괴적 방법을 사용하여 확인하는 것을 선호합니다.
-     * 헤더 바이트 또는 기타 마커가 있는 경우. 구현은 [mimeType]에 의존할 수도 있습니다.
-     * 그러나 정확하지는 않습니다(예: .png로 끝나지만 .jpg로 인코딩된 파일).
-     *
-     * @param source 읽을 [BufferedSource]입니다.
-     * @param mimeType [source]에 대한 선택적 MIME 유형입니다.
+     * [Factory.create]에서 제공하는 [SourceResult]를 디코딩하거나 'null'을 반환하여 component registry 의 다음 [Decoder]에 위임합니다.
      */
-    fun handles(source: BufferedSource, mimeType: String?): Boolean
+    suspend fun decode(): DecodeResult?
 
-    /**
-     * [source]를 [Drawable]로 디코딩합니다.
-     *
-     * 참고: 구현은 완료되면 [source]를 닫을 책임이 있습니다.
-     *
-     * @param pool [Bitmap] 인스턴스를 요청하는 데 사용할 수 있는 [BitmapPool].
-     * @param source 읽을 [BufferedSource]입니다.
-     * @param size 이미지에 대해 요청된 크기입니다.
-     * @param options 이 요청에 대한 구성 옵션 집합입니다.
-     */
-    suspend fun decode(
-        pool: BitmapPool,
-        source: BufferedSource,
-        size: Size,
-        options: Options
-    ): DecodeResult
+    fun interface Factory {
+
+        /**
+         * 이 Factory 에서 소스에 대한 디코더를 생성할 수 없는 경우 [result] 또는 'null'을 디코딩할 수 있는 [Decoder]를 반환합니다.
+         *
+         * 구현은 [result]의 [ImageSource]를 사용 **해서는 안 됩니다**. 이는 후속 디코더에 대한 호출이 실패할 수 있기 때문입니다. [ImageSource]는 [decode]에서만 사용해야 합니다.
+         *
+         * [BufferedSource.peek], [BufferedSource.rangeEquals] 또는 기타 비파괴 방법을 사용하여 헤더 바이트 또는 기타 마커가 있는지 확인하는 것을 선호합니다.
+         * 구현은 [SourceResult.mimeType]에 의존할 수도 있지만 정확하다는 보장은 없습니다(예: .png로 끝나지만 .jpg로 인코딩된 파일).
+         *
+         * @param result [Fetcher]의 결과입니다.
+         * @param options 이 요청에 대한 구성 옵션 세트.
+         * @param imageLoader 이 요청을 실행하는 [ImageLoader]입니다.
+         */
+        fun create(result: SourceResult, options: Options, imageLoader: ImageLoader): Decoder?
+    }
 }

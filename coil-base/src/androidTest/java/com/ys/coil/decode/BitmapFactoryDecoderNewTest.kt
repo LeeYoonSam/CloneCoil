@@ -31,12 +31,12 @@ import kotlin.test.assertTrue
 
 class BitmapFactoryDecoderNewTest {
 	private lateinit var context: Context
-	private lateinit var decoderFactory: BitmapFactoryDecoderNew.Factory
+	private lateinit var decoderFactory: BitmapFactoryDecoder.Factory
 
 	@Before
 	fun before() {
 		context = ApplicationProvider.getApplicationContext()
-		decoderFactory = BitmapFactoryDecoderNew.Factory()
+		decoderFactory = BitmapFactoryDecoder.Factory()
 	}
 
 	@Test
