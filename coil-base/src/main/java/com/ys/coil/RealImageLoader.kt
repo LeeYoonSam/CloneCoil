@@ -39,7 +39,7 @@ internal class RealImageLoader(
     val componentRegistry: ComponentRegistry,
     val options: ImageLoaderOptions,
     val logger: Logger?
-) : ImageLoader, ComponentCallbacks {
+) : ImageLoader {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate +
         CoroutineExceptionHandler { _, throwable -> logger?.log(TAG, throwable) })
@@ -174,7 +174,7 @@ internal class RealImageLoader(
     }
 
     /** [SystemCallbacks.onTrimMemory]에 의해 호출됩니다. */
-    override fun onTrimMemory(level: Int) {
+    internal fun onTrimMemory(level: Int) {
         memoryCache?.trimMemory(level)
     }
 
