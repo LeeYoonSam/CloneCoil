@@ -75,7 +75,7 @@ interface ImageLoader {
      * @param request 실행할 요청입니다.
      * @return 요청이 성공적으로 완료되면 [SuccessResult] 그렇지 않으면 [ErrorResult]를 반환합니다.
      */
-    fun execute(request: ImageRequest): ImageResult
+    suspend fun execute(request: ImageRequest): ImageResult
 
     /**
      * 신규 및 진행 중인 요청을 취소하고 [MemoryCache]를 지우고 열려 있는 시스템 리소스를 모두 닫습니다.

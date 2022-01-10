@@ -1,10 +1,10 @@
 package com.ys.coil.interceptor
 
+import com.ys.coil.EventListener
 import com.ys.coil.request.ImageRequest
 import com.ys.coil.request.ImageResult
 import com.ys.coil.request.NullRequestData
 import com.ys.coil.size.Size
-import java.util.EventListener
 
 internal class RealInterceptorChain(
 	val initialRequest: ImageRequest,

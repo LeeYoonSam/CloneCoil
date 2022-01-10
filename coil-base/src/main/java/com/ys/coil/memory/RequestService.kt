@@ -6,12 +6,16 @@ import android.os.Build
 import android.widget.ImageView
 import androidx.annotation.MainThread
 import androidx.lifecycle.Lifecycle
+import com.ys.coil.ImageLoader
 import com.ys.coil.decode.Options
 import com.ys.coil.lifecycle.GlobalLifecycle
 import com.ys.coil.lifecycle.LifecycleCoroutineDispatcher
 import com.ys.coil.request.CachePolicy
+import com.ys.coil.request.ErrorResult
 import com.ys.coil.request.GetRequest
+import com.ys.coil.request.ImageRequest
 import com.ys.coil.request.LoadRequest
+import com.ys.coil.request.NullRequestDataException
 import com.ys.coil.request.Request
 import com.ys.coil.size.DisplaySizeResolver
 import com.ys.coil.size.Scale
@@ -19,15 +23,46 @@ import com.ys.coil.size.SizeResolver
 import com.ys.coil.size.ViewSizeResolver
 import com.ys.coil.target.ViewTarget
 import com.ys.coil.transform.Transformation
+import com.ys.coil.util.Logger
+import com.ys.coil.util.SystemCallbacks
 import com.ys.coil.util.getLifecycle
 import com.ys.coil.util.scale
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 
 /**
  * [Request]에 대해 작동하는 작업을 처리합니다.
  */
-internal class RequestService {
+internal class RequestService(
+    private val imageLoader: ImageLoader,
+    private val systemCallbacks: SystemCallbacks,
+    logger: Logger?
+) {
+
+    /**
+     * 수명 주기에 따라 [ImageRequest]를 자동으로 폐기 및/또는 다시 시작하려면 [initialRequest]를 래핑합니다.
+     */
+    fun requestDelegate(initialRequest: ImageRequest, job: Job): RequestDelegate {
+        val lifecycle = initialRequest.lifecycle
+        return when (val target = initialRequest.target) {
+            is ViewTarget<*> ->
+                ViewTargetRequestDelegate(imageLoader, initialRequest, target, lifecycle, job)
+            else -> BaseRequestDelegate(lifecycle, job)
+        }
+    }
+
+    fun errorResult(request: ImageRequest, throwable: Throwable): ErrorResult {
+        return ErrorResult(
+            drawable = if (throwable is NullRequestDataException) {
+                request.fallback ?: request.error
+            } else {
+                request.error
+            },
+            request = request,
+            throwable = throwable
+        )
+    }
 
     @MainThread
     fun lifecycleInfo(request: Request): LifecycleInfo {

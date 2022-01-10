@@ -19,6 +19,7 @@ import androidx.annotation.Px
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.ys.coil.R
 import com.ys.coil.disk.DiskCache
+import com.ys.coil.memory.MemoryCache
 import com.ys.coil.request.DefaultRequestOptions
 import com.ys.coil.request.Parameters
 import com.ys.coil.request.ViewTargetRequestManager
@@ -86,6 +87,8 @@ internal fun <T> Deferred<T>.getCompletedOrNull(): T? {
         null
     }
 }
+
+internal inline operator fun MemoryCache.get(key: MemoryCache.Key?) = key?.let(::get)
 
 internal val Context.safeCacheDir: File get() = cacheDir.apply { mkdirs() }
 

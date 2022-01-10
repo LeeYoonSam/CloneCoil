@@ -41,7 +41,7 @@ interface EventListener : ImageRequest.Listener {
 	 * @param size 이 요청에 대해 해결된 [Size]입니다.
 	 */
 	@MainThread
-	fun resolveSizeEnd(size: Size) {}
+	fun resolveSizeEnd(request: ImageRequest, size: Size) {}
 
 	/**
 	 * [Mapper.map] 전에 호출됩니다.

@@ -7,7 +7,7 @@ import com.ys.coil.decode.DataSource
 import com.ys.coil.interceptor.Interceptor.Chain
 import com.ys.coil.memory.RequestService
 import com.ys.coil.request.ImageResult
-import java.util.logging.Logger
+import com.ys.coil.util.Logger
 
 internal class EngineInterceptor(
 	private val imageLoader: ImageLoader,
