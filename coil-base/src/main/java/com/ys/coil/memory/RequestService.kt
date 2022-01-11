@@ -1,43 +1,34 @@
 package com.ys.coil.memory
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.os.Build
-import android.widget.ImageView
-import androidx.annotation.MainThread
-import androidx.lifecycle.Lifecycle
+import androidx.annotation.WorkerThread
 import com.ys.coil.ImageLoader
-import com.ys.coil.lifecycle.GlobalLifecycle
-import com.ys.coil.lifecycle.LifecycleCoroutineDispatcher
 import com.ys.coil.request.CachePolicy
 import com.ys.coil.request.ErrorResult
-import com.ys.coil.request.GetRequest
 import com.ys.coil.request.ImageRequest
-import com.ys.coil.request.LoadRequest
 import com.ys.coil.request.NullRequestDataException
-import com.ys.coil.request.Request
-import com.ys.coil.size.DisplaySizeResolver
-import com.ys.coil.size.Scale
-import com.ys.coil.size.SizeResolver
-import com.ys.coil.size.ViewSizeResolver
+import com.ys.coil.request.Options
+import com.ys.coil.size.Size
 import com.ys.coil.target.ViewTarget
 import com.ys.coil.transform.Transformation
+import com.ys.coil.util.HardwareBitmapService
 import com.ys.coil.util.Logger
 import com.ys.coil.util.SystemCallbacks
-import com.ys.coil.util.getLifecycle
-import com.ys.coil.util.scale
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import com.ys.coil.util.VALID_TRANSFORMATION_CONFIGS
+import com.ys.coil.util.allowInexactSize
+import com.ys.coil.util.isHardware
 import kotlinx.coroutines.Job
 
 /**
- * [Request]에 대해 작동하는 작업을 처리합니다.
+ * [ImageRequest]에 대해 작동하는 작업을 처리합니다.
  */
 internal class RequestService(
     private val imageLoader: ImageLoader,
     private val systemCallbacks: SystemCallbacks,
     logger: Logger?
 ) {
+
+    private val hardwareBitmapService = HardwareBitmapService(logger)
 
     /**
      * 수명 주기에 따라 [ImageRequest]를 자동으로 폐기 및/또는 다시 시작하려면 [initialRequest]를 래핑합니다.
@@ -63,105 +54,88 @@ internal class RequestService(
         )
     }
 
-    @MainThread
-    fun lifecycleInfo(request: Request): LifecycleInfo {
-        return when (request) {
-            is GetRequest -> LifecycleInfo.GLOBAL
-            is LoadRequest -> {
-                // 이 요청에 대한 수명 주기를 찾습니다.
-                val lifecycle = request.getLifecycle()
-                return if (lifecycle != null) {
-                    LifecycleInfo(
-                        lifecycle = lifecycle,
-                        mainDispatcher = LifecycleCoroutineDispatcher.create(Dispatchers.Main.immediate, lifecycle)
-                    )
-                } else {
-                    LifecycleInfo.GLOBAL
-                }
-            }
-        }
-    }
+    /**
+     * 요청 옵션을 반환합니다. 이 함수는 메인 스레드에서 호출되며 빨라야 합니다.
+     */
+    fun options(request: ImageRequest, size: Size): Options {
+        // 요청된 비트맵 구성이 검사를 통과하지 못하면 ARGB_8888로 대체합니다.
+        val isValidConfig = isConfigValidForTransformations(request) &&
+            isConfigValidForHardwareAllocation(request, size)
+        val config = if (isValidConfig) request.bitmapConfig else Bitmap.Config.ARGB_8888
 
-    fun sizeResolver(request: Request, context: Context): SizeResolver {
-        val sizeResolver = request.sizeResolver
-        val target = request.target
-        return when {
-            sizeResolver != null -> sizeResolver
-            target is ViewTarget<*> -> ViewSizeResolver(target.view)
-            else -> DisplaySizeResolver(context)
-        }
-    }
-
-    fun scale(request: Request, sizeResolver: SizeResolver): Scale {
-        val scale = request.scale
-        if (scale != null) {
-            return scale
-        }
-
-        if (sizeResolver is ViewSizeResolver<*>) {
-            val view = sizeResolver.view
-            if (view is ImageView) {
-                return view.scale
-            }
-        }
-
-        val target = request.target
-        if (target is ViewTarget<*>) {
-            val view = target.view
-            if (view is ImageView) {
-                return view.scale
-            }
-        }
-
-        return Scale.FILL
-    }
-
-    fun options(request: Request, scale: Scale, isOnline: Boolean): Options {
-        val isValidBitmapConfig = request.isConfigValidForTransformations() && request.isConfigValidForAllowHardware()
-        val bitmapConfig = if (isValidBitmapConfig) request.bitmapConfig else Bitmap.Config.ARGB_8888
-        val allowRgb565 = isValidBitmapConfig && request.allowRgb565
-        val networkCachePolicy = if (!isOnline && request.networkCachePolicy.readEnabled) {
-            CachePolicy.DISABLED
-        } else {
+        // 오프라인이라는 것을 알고 있으면 네트워크에서 가져오기를 비활성화합니다.
+        val networkCachePolicy = if (systemCallbacks.isOnline) {
             request.networkCachePolicy
+        } else {
+            CachePolicy.DISABLED
         }
+
+        /*
+        변환이 있거나 요청된 구성이 ALPHA_8인 경우 allowRgb565를 비활성화합니다.
+        ALPHA_8은 각 픽셀이 1바이트인 마스크 구성이므로 이 경우 최적화로 RGB_565를 사용하는 것은 의미가 없습니다.
+         */
+        val allowRgb565 = request.allowRgb565 && request.transformations.isEmpty() &&
+            config != Bitmap.Config.ALPHA_8
 
         return Options(
-            config = bitmapConfig,
+            context = request.context,
+            config = config,
             colorSpace = request.colorSpace,
-            scale = scale,
+            size = size,
+            scale = request.scale,
+            allowInexactSize = request.allowInexactSize,
             allowRgb565 = allowRgb565,
-            networkCachePolicy = request.diskCachePolicy,
-            diskCachePolicy = networkCachePolicy
+            premultipliedAlpha = request.premultipliedAlpha,
+            diskCacheKey = request.diskCacheKey,
+            headers = request.headers,
+            parameters = request.parameters,
+            memoryCachePolicy = request.memoryCachePolicy,
+            diskCachePolicy = request.diskCachePolicy,
+            networkCachePolicy = networkCachePolicy
         )
     }
 
-    private fun LoadRequest.getLifecycle(): Lifecycle? {
-        return when {
-            lifecycle != null -> lifecycle
-            target is ViewTarget<*> -> target.view.context.getLifecycle()
-            else -> context.getLifecycle()
-        }
+    /**
+     * [requestedConfig]가 [request]에 대해 유효한(즉, [Target]으로 반환될 수 있음) 구성이면 'true'를 반환합니다.
+     */
+    fun isConfigValidForHardware(request: ImageRequest, requestedConfig: Bitmap.Config): Boolean {
+        // 요청된 비트맵 구성이 소프트웨어인 경우 단락.
+        if (!requestedConfig.isHardware) return true
+
+        // 요청이 하드웨어 비트맵을 허용하는지 확인하십시오.
+        if (!request.allowHardware) return false
+
+        // 비 하드웨어 가속 대상에 대한 하드웨어 비트맵을 방지합니다.
+        val target = request.target
+        if (target is ViewTarget<*> &&
+            target.view.run { isAttachedToWindow && !isHardwareAccelerated }) return false
+
+        return  true
     }
 
-    private fun Request.isConfigValidForTransformations(): Boolean {
-        return transformations.isEmpty() || Transformation.VALID_CONFIGS.contains(bitmapConfig)
+    /**
+     * 하드웨어 비트맵을 할당할 수 있으면 'true'를 반환합니다.
+     */
+    @WorkerThread
+    fun allowHardwareWorkerThread(options: Options): Boolean {
+        return !options.config.isHardware || hardwareBitmapService.allowHardwareWorkerThread()
     }
 
-    private fun Request.isConfigValidForAllowHardware(): Boolean {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.O || allowHardware || bitmapConfig != Bitmap.Config.HARDWARE
+    /**
+     * [request]의 요청된 비트맵 구성이 유효한 경우 'true'를 반환합니다(즉, [Target]으로 반환될 수 있음).
+     *
+     * 이 검사는 새 하드웨어 비트맵을 할당할 수 있는지도 검사한다는 점을 제외하고는 [isConfigValidForHardware]와 유사합니다.
+     */
+    private fun isConfigValidForHardwareAllocation(request: ImageRequest, size: Size): Boolean {
+        return isConfigValidForHardware(request, request.bitmapConfig) &&
+            hardwareBitmapService.allowHardwareMainThread(size)
     }
 
-    data class LifecycleInfo(
-        val lifecycle: Lifecycle,
-        val mainDispatcher: CoroutineDispatcher
-    ) {
-
-        companion object {
-            val GLOBAL = LifecycleInfo(
-                lifecycle = GlobalLifecycle,
-                mainDispatcher = Dispatchers.Main.immediate
-            )
-        }
+    /**
+     * [ImageRequest.bitmapConfig]가 [Transformation]에 대해 유효한 경우 'true'를 반환합니다.
+     */
+    private fun isConfigValidForTransformations(request: ImageRequest): Boolean {
+        return request.transformations.isEmpty() ||
+            request.bitmapConfig in VALID_TRANSFORMATION_CONFIGS
     }
 }

@@ -5,6 +5,7 @@ import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import com.ys.coil.EventListener.Factory
 import com.ys.coil.decode.DecodeResult
+import com.ys.coil.decode.Decoder
 import com.ys.coil.fetch.FetchResult
 import com.ys.coil.fetch.Fetcher
 import com.ys.coil.request.ErrorResult

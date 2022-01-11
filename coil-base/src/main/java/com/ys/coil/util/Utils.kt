@@ -118,6 +118,15 @@ internal val Uri.firstPathSegment: String?
 internal val Configuration.nightMode: Int
     get() = uiMode and Configuration.UI_MODE_NIGHT_MASK
 
+/**
+ * [Transformation.transform]의 입력 및 출력 비트맵에 대한 유효한 비트맵 구성의 허용 목록입니다.
+ */
+internal val VALID_TRANSFORMATION_CONFIGS = if (VERSION.SDK_INT >= 26) {
+    arrayOf(Bitmap.Config.ARGB_8888, Bitmap.Config.RGBA_F16)
+} else {
+    arrayOf(Bitmap.Config.ARGB_8888)
+}
+
 internal fun String.toNonNegativeInt(defaultValue: Int): Int {
     val value = toLongOrNull() ?: return defaultValue
     return when {
