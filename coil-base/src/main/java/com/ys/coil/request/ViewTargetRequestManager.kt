@@ -2,7 +2,6 @@ package com.ys.coil.request
 
 import android.view.View
 import androidx.annotation.MainThread
-import com.ys.coil.memory.ViewTargetRequestDelegate
 import com.ys.coil.util.getCompletedOrNull
 import com.ys.coil.util.isMainThread
 import kotlinx.coroutines.Deferred

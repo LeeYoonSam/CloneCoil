@@ -17,7 +17,6 @@ import com.ys.coil.map.ResourceIntMapper
 import com.ys.coil.map.ResourceUriMapper
 import com.ys.coil.map.StringMapper
 import com.ys.coil.memory.*
-import com.ys.coil.memory.RequestService
 import com.ys.coil.request.*
 import com.ys.coil.target.Target
 import com.ys.coil.target.ViewTarget

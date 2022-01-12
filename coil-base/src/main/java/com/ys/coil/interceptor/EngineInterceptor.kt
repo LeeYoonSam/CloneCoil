@@ -5,7 +5,6 @@ import androidx.annotation.VisibleForTesting
 import com.ys.coil.ImageLoader
 import com.ys.coil.decode.DataSource
 import com.ys.coil.interceptor.Interceptor.Chain
-import com.ys.coil.memory.RequestService
 import com.ys.coil.request.ImageResult
 import com.ys.coil.util.Logger
 
