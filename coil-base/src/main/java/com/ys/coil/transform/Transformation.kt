@@ -1,48 +1,37 @@
 package com.ys.coil.transform
 
 import android.graphics.Bitmap
+import android.graphics.Bitmap.Config.ARGB_8888
+import android.graphics.Bitmap.Config.RGBA_F16
 import android.graphics.drawable.BitmapDrawable
-import android.os.Build.VERSION.SDK_INT
-import android.os.Build.VERSION_CODES.O
-import androidx.collection.arraySetOf
-import com.ys.coil.bitmappool.BitmapPool
-import com.ys.coil.fetch.DrawableResult
 import com.ys.coil.decode.DecodeResult
+import com.ys.coil.fetch.DrawableResult
+import com.ys.coil.size.Size
 
 /**
  * 이미지의 픽셀 데이터를 변환하기 위한 인터페이스입니다.
  *
- * 참고: 변환은 [DrawableResult.drawable] 또는 [DecodeResult.drawable]이 [BitmapDrawable]인 경우에만 적용됩니다.
+ * 참고: [DrawableResult.drawable] 또는 [DecodeResult.drawable]이 [BitmapDrawable]이 아닌 경우,
+ * 하나로 변환됩니다. 이렇게 하면 애니메이션 드로어블이 애니메이션의 첫 번째 프레임만 그리게 됩니다.
  *
- * @see RequestBuilder.transformations
+ * @ImageRequest.Builder.transformations 참조
  */
 interface Transformation {
-    companion object {
-        /**
-         * [transform]의 입력 및 출력 비트맵에 대한 유효한 비트맵 구성의 화이트리스트입니다.
-         */
-        internal val VALID_CONFIGS = if (SDK_INT >= O) {
-            arraySetOf(Bitmap.Config.ARGB_8888, Bitmap.Config.RGBA_F16)
-        } else {
-            arraySetOf(Bitmap.Config.ARGB_8888)
-        }
-    }
 
     /**
-     * 이 변환에 대한 고유 키를 반환합니다.
+     * 이 변환에 대한 고유한 캐시 키입니다.
      *
-     * 키는 이 변환의 일부인 매개변수를 포함해야 합니다(예: 크기, 크기, 색상, 반경 등).
+     * 키는 이미지 요청의 메모리 캐시 키에 추가되며 이 변환의 일부인 매개변수(예: 크기, 크기, 색상, 반경 등)를 포함해야 합니다.
      */
-    fun key(): String
+    val cacheKey: String
 
     /**
-     * [Bitmap]에 변형을 적용합니다.
+     * [input]에 변형을 적용하고 변형된 [Bitmap]을 반환합니다.
      *
-     * 최적의 성능을 위해 이 메서드 내에서 [Bitmap.createBitmap]을 사용하지 마십시오. 대신 제공된 [BitmapPool]을 사용하여 새 [Bitmap]을 가져옵니다.
-     * 또한 출력 [Bitmap]을 제외한 모든 Bitmap을 풀로 반환하여 재사용할 수 있도록 해야 합니다.
-     *
-     * @see BitmapPool.get
-     * @see BitmapPool.put
+     * @param input 변환할 입력 [Bitmap]입니다.
+     * 구성은 항상 [ARGB_8888] 또는 [RGBA_F16]입니다.
+     * @param size 이미지 요청의 크기입니다.
+     * @return 변환된 [Bitmap].
      */
-    suspend fun transform(pool: BitmapPool, input: Bitmap): Bitmap
+    suspend fun transform(input: Bitmap, size: Size): Bitmap
 }

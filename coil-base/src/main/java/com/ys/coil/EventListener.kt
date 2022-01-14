@@ -74,7 +74,7 @@ interface EventListener : ImageRequest.Listener {
 	 * [output]이 'null'이면 메모리 캐시에 캐시되지 않습니다.
 	 */
 	@MainThread
-	fun keyEnd(request: ImageRequest, output: Any) {}
+	fun keyEnd(request: ImageRequest, output: String?) {}
 
 	/**
 	 * [Fetcher.fetch] 전에 호출됩니다.

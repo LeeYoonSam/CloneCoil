@@ -17,8 +17,11 @@ import android.view.View
 import android.webkit.MimeTypeMap
 import androidx.annotation.Px
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
+import com.ys.coil.ComponentRegistry
 import com.ys.coil.R
+import com.ys.coil.decode.Decoder
 import com.ys.coil.disk.DiskCache
+import com.ys.coil.fetch.Fetcher
 import com.ys.coil.memory.MemoryCache
 import com.ys.coil.request.DefaultRequestOptions
 import com.ys.coil.request.Parameters
@@ -126,6 +129,14 @@ internal val VALID_TRANSFORMATION_CONFIGS = if (VERSION.SDK_INT >= 26) {
 } else {
     arrayOf(Bitmap.Config.ARGB_8888)
 }
+
+internal inline fun ComponentRegistry.Builder.addFirst(
+    pair: Pair<Fetcher.Factory<*>, Class<*>>?
+) = apply { if (pair != null) fetcherFactories.add(0, pair) }
+
+internal inline fun ComponentRegistry.Builder.addFirst(
+    factory: Decoder.Factory?
+) = apply { if (factory != null) decoderFactories.add(0, factory) }
 
 internal fun String.toNonNegativeInt(defaultValue: Int): Int {
     val value = toLongOrNull() ?: return defaultValue
