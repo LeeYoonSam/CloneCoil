@@ -15,18 +15,7 @@ import com.ys.coil.memory.MemoryCache.Key
 import com.ys.coil.request.ViewTargetRequestManager
 import com.ys.coil.size.Scale
 import com.ys.coil.target.ViewTarget
-import kotlinx.coroutines.suspendCancellableCoroutine
-import okhttp3.Call
-import okhttp3.Response
 import java.io.Closeable
-
-internal suspend inline fun Call.await(): Response {
-    return suspendCancellableCoroutine { continuation ->
-        val callback = ContinuationCallback(this, continuation)
-        enqueue(callback)
-        continuation.invokeOnCancellation(callback)
-    }
-}
 
 internal fun Bitmap.Config?.getBytesPerPixel(): Int {
     return when {

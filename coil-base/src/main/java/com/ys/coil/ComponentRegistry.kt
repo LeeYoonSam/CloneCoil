@@ -6,7 +6,6 @@ import com.ys.coil.fetch.SourceResult
 import com.ys.coil.interceptor.Interceptor
 import com.ys.coil.key.Keyer
 import com.ys.coil.map.Mapper
-import com.ys.coil.map.MeasuredMapper
 import com.ys.coil.request.Options
 import com.ys.coil.util.forEachIndices
 import com.ys.coil.util.toImmutableList
