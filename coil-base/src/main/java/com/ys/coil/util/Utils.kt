@@ -6,16 +6,19 @@ import android.content.pm.ApplicationInfo
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.ColorSpace
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 import android.net.Uri
-import android.os.Build
 import android.os.Build.VERSION
 import android.os.Looper
-import android.os.StatFs
 import android.view.View
 import android.webkit.MimeTypeMap
-import androidx.annotation.Px
+import android.widget.ImageView
+import android.widget.ImageView.ScaleType.CENTER_INSIDE
+import android.widget.ImageView.ScaleType.FIT_CENTER
+import android.widget.ImageView.ScaleType.FIT_END
+import android.widget.ImageView.ScaleType.FIT_START
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.ys.coil.ComponentRegistry
 import com.ys.coil.R
@@ -26,10 +29,12 @@ import com.ys.coil.memory.MemoryCache
 import com.ys.coil.request.DefaultRequestOptions
 import com.ys.coil.request.Parameters
 import com.ys.coil.request.ViewTargetRequestManager
+import com.ys.coil.size.Scale
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import okhttp3.Headers
+import java.io.Closeable
 import java.io.File
 import java.util.Optional
 import kotlin.coroutines.CoroutineContext
@@ -95,8 +100,28 @@ internal inline operator fun MemoryCache.get(key: MemoryCache.Key?) = key?.let(:
 
 internal val Context.safeCacheDir: File get() = cacheDir.apply { mkdirs() }
 
+internal val Drawable.width: Int
+    get() = (this as? BitmapDrawable)?.bitmap?.width ?: intrinsicWidth
+
+internal val Drawable.height: Int
+    get() = (this as? BitmapDrawable)?.bitmap?.height ?: intrinsicHeight
+
 internal val Drawable.isVector: Boolean
     get() = this is VectorDrawable || this is VectorDrawableCompat
+
+internal fun Closeable.closeQuietly() {
+    try {
+        close()
+    } catch (e: RuntimeException) {
+        throw e
+    } catch (_: Exception) {}
+}
+
+internal val ImageView.scale: Scale
+    get() = when (scaleType) {
+        FIT_START, FIT_CENTER, FIT_END, CENTER_INSIDE -> Scale.FIT
+        else -> Scale.FILL
+    }
 
 /**
  * 특수 문자에 더 관대하도록 [MimeTypeMap.getFileExtensionFromUrl]에서 수정되었습니다.
@@ -155,9 +180,10 @@ internal fun DiskCache.Editor.abortQuietly() {
 
 internal fun unsupported(): Nothing = error("Unsupported")
 
-/** A simple [Optional] replacement. */
+/** 간단한 [Optional] 교체. */
 internal class Option<T : Any>(@JvmField val value: T?)
 
+/** 코일을 위한 네임스페이스 전용 유틸리티 메소드. */
 internal object Utils {
 
     private const val STANDARD_MEMORY_MULTIPLIER = 0.2
@@ -172,56 +198,6 @@ internal object Utils {
      * @see DiskCache.Builder.directory
      */
     private var singletonDiskCache: DiskCache? = null
-
-    private const val MIN_DISK_CACHE_SIZE: Long = 10 * 1024 * 1024 // 10MB
-    private const val MAX_DISK_CACHE_SIZE: Long = 250 * 1024 * 1024 // 250MB
-
-    private const val DISK_CACHE_PERCENTAGE = 0.02
-
-    private const val STANDARD_MULTIPLIER = 0.25
-
-    /** 주어진 너비, 높이 및 [Bitmap.Config]를 사용하여 [Bitmap]의 메모리 내 크기를 반환합니다. */
-    fun calculateAllocationByteCount(@Px width: Int, @Px height: Int, config: Bitmap.Config?): Int {
-        return width * height * config.getBytesPerPixel()
-    }
-
-    fun getDefaultBitmapConfig(): Bitmap.Config {
-        // Android O 이상의 하드웨어 비트맵은 변형 없이 그리기에 최적화되어 있습니다.
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Bitmap.Config.HARDWARE else Bitmap.Config.ARGB_8888
-    }
-
-    fun getDefaultAvailableMemoryPercentage(context: Context): Double {
-        val activityManager: ActivityManager = context.requireSystemService()
-        return if (activityManager.isLowRawDeviceCompat()) LOW_MEMORY_MULTIPLIER else STANDARD_MULTIPLIER
-    }
-
-    fun getDefaultBitmapPoolPercentage(): Double {
-        // 풀에 추가할 수 없는 하드웨어 비트맵을 기본으로 하기 때문에 Android O 이상에서 비트맵 풀링에 더 적은 메모리를 할당합니다.
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) 0.25 else 0.5
-    }
-
-    fun getDefaultCacheDirectory(context: Context): File {
-        return File(context.cacheDir, SINGLETON_DISK_CACHE_NAME).apply { mkdirs() }
-    }
-
-    /** Modified from Picasso. */
-    fun calculateAvailableMemorySize(context: Context, percentage: Double): Long {
-        val activityManager: ActivityManager = context.requireSystemService()
-        val isLargeHeap = (context.applicationInfo.flags and ApplicationInfo.FLAG_LARGE_HEAP) != 0
-        val memoryClassMegabytes = if (isLargeHeap) activityManager.largeMemoryClass else activityManager.memoryClass
-        return (percentage * memoryClassMegabytes * 1024 * 1024).toLong()
-    }
-
-    /** Modified from Picasso. */
-    fun calculateDiskCacheSize(cacheDirectory: File): Long {
-        return try {
-            val cacheDir = StatFs(cacheDirectory.absolutePath)
-            val size = DISK_CACHE_PERCENTAGE * cacheDir.getBlockCountCompat() * cacheDir.getBlockSizeCompat()
-            return size.toLong().coerceIn(MIN_DISK_CACHE_SIZE, MAX_DISK_CACHE_SIZE)
-        } catch (ignored: Exception) {
-            MIN_DISK_CACHE_SIZE
-        }
-    }
 
     fun calculateMemoryCacheSize(context: Context, percent: Double): Int {
         val memoryClassMegabytes = try {
