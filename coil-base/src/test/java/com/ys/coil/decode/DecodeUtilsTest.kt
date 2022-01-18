@@ -5,7 +5,10 @@ import androidx.test.core.app.ApplicationProvider
 import com.ys.coil.size.Scale
 import okio.buffer
 import okio.source
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -13,7 +16,12 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class DecodeUtilsTest {
 
-    private val context: Context = ApplicationProvider.getApplicationContext()
+    private lateinit var context: Context
+
+    @Before
+    fun before() {
+        context = ApplicationProvider.getApplicationContext()
+    }
 
     @Test
     fun `inSampleSize with FILL is calculated correctly`() {
@@ -84,4 +92,30 @@ class DecodeUtilsTest {
         val source = context.assets.open("static.webp").source().buffer()
         assertFalse(DecodeUtils.isAnimatedWebP(source))
     }
+
+    @Test
+    fun `isHeif true positive`() {
+        val source = context.assets.open("static.heif").source().buffer()
+        assertTrue(DecodeUtils.isHeif(source))
+    }
+
+    @Test
+    fun `isHeif true negative`() {
+        val source = context.assets.open("normal.jpg").source().buffer()
+        assertFalse(DecodeUtils.isHeif(source))
+    }
+
+    @Test
+    fun `isAnimatedHeif true positive`() {
+        val source = context.assets.open("animated.heif").source().buffer()
+        assertTrue(DecodeUtils.isAnimatedHeif(source))
+    }
+
+    @Test
+    fun `isAnimatedHeif true negative`() {
+        val source = context.assets.open("animated.webp").source().buffer()
+        assertFalse(DecodeUtils.isAnimatedHeif(source))
+    }
+
+
 }

@@ -22,6 +22,7 @@ import android.widget.ImageView.ScaleType.FIT_START
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.ys.coil.ComponentRegistry
 import com.ys.coil.R
+import com.ys.coil.decode.DataSource
 import com.ys.coil.decode.Decoder
 import com.ys.coil.disk.DiskCache
 import com.ys.coil.fetch.Fetcher
@@ -99,6 +100,14 @@ internal fun <T> Deferred<T>.getCompletedOrNull(): T? {
 internal inline operator fun MemoryCache.get(key: MemoryCache.Key?) = key?.let(::get)
 
 internal val Context.safeCacheDir: File get() = cacheDir.apply { mkdirs() }
+
+internal val DataSource.emoji: String
+    get() = when (this) {
+        DataSource.MEMORY_CACHE,
+        DataSource.MEMORY -> Emoji.BRAIN
+        DataSource.DISK -> Emoji.FLOPPY
+        DataSource.NETWORK -> Emoji.CLOUD
+    }
 
 internal val Drawable.width: Int
     get() = (this as? BitmapDrawable)?.bitmap?.width ?: intrinsicWidth

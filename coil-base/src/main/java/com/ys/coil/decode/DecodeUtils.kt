@@ -77,7 +77,7 @@ object DecodeUtils {
     }
 
     /**
-     * 이미지의 소스 치수([srcWidth] 및 [srcHeight]), 출력 치수([dstWidth], [dstHeight]) 및 [크기]가 주어지면
+     * 이미지의 소스 치수([srcWidth] 및 [srcHeight]), 출력 치수([dstWidth], [dstHeight]) 및 [scale]가 주어지면
      * [BitmapFactory.Options.inSampleSize]를 계산합니다.
      */
     @JvmStatic

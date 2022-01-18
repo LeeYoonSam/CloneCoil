@@ -18,7 +18,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.ys.coil.decode.Decoder
 import com.ys.coil.fetch.Fetcher
-import com.ys.coil.lifecycle.GlobalLifecycle
 import com.ys.coil.memory.MemoryCache
 import com.ys.coil.request.ImageRequest.Builder
 import com.ys.coil.size.OriginalSize
