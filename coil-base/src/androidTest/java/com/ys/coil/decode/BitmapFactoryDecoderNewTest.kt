@@ -15,8 +15,8 @@ import com.ys.coil.size.Scale
 import com.ys.coil.size.Size
 import com.ys.coil.test.util.assertIsSimilarTo
 import com.ys.coil.test.util.similarTo
-import com.ys.coil.util.decodeBitmapAsset
-import com.ys.coil.util.size
+import com.ys.coil.decodeBitmapAsset
+import com.ys.coil.size
 import kotlinx.coroutines.runBlocking
 import okio.buffer
 import okio.source
