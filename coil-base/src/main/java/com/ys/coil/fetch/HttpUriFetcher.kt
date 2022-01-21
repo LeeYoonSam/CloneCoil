@@ -79,12 +79,12 @@ class HttpUriFetcher(
 				cacheStrategy = CacheStrategy.Factory(newRequest(), null).compute()
 			}
 
-			// Slow path: fetch the image from the network.
+			// 느린 경로: 네트워크에서 이미지를 가져옵니다.
 			val request = cacheStrategy.networkRequest ?: newRequest()
 			val response = executeNetworkRequest(request)
 			val responseBody = checkNotNull(response.body) { "response body == null" }
 			try {
-				// Read the response from the disk cache after writing it.
+				// 쓰기 후 디스크 캐시에서 응답을 읽습니다.
 				snapshot = writeToDiskCache(snapshot, request, response, cacheStrategy.cacheResponse)
 				if (snapshot != null) {
 					return SourceResult(
@@ -94,8 +94,7 @@ class HttpUriFetcher(
 					)
 				}
 
-				// If we can't read it from the cache or write it to the cache, read the response
-				// directly from the response body.
+				// 캐시에서 읽을 수 없거나 캐시에 쓸 수 없으면 응답 본문에서 직접 응답을 읽으십시오.
 				return SourceResult(
 					source = responseBody.toImageSource(),
 					mimeType = getMimeType(url, responseBody.contentType()),

@@ -34,6 +34,9 @@ android {
         resources.pickFirsts += "META-INF/AL2.0"
         resources.pickFirsts += "META-INF/LGPL2.1"
     }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 dependencies {
