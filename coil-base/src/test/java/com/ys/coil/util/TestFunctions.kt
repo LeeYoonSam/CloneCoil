@@ -1,9 +1,8 @@
 package com.ys.coil.util
 
+import android.content.Context
 import android.graphics.Bitmap
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.setMain
+import com.ys.coil.request.ImageRequest
 import org.robolectric.Shadows
 
 fun createBitmap(
@@ -16,3 +15,8 @@ fun createBitmap(
     Shadows.shadowOf(bitmap).setMutable(isMutable)
     return bitmap
 }
+
+fun createRequest(
+    context: Context,
+    builder: ImageRequest.Builder.() -> Unit = {}
+) : ImageRequest = ImageRequest.Builder(context).data(Unit).apply(builder).build()

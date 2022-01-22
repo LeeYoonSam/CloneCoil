@@ -7,7 +7,7 @@ import com.ys.coil.size.Size
 /**
  * [ImageLoader]의 이미지 엔진에 대한 요청을 관찰, 변환, 단락 또는 재시도하십시오.
  */
-interface Interceptor {
+fun interface Interceptor {
 
 	suspend fun interceptor(chain: Chain): ImageResult
 
