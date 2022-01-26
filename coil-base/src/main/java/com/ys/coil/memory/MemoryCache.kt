@@ -18,23 +18,23 @@ interface MemoryCache {
     /** 캐시의 최대 크기(바이트)입니다. */
     val maxSize: Int
 
-    /** The keys present in the cache. */
+    /** 캐시에 있는 키입니다. */
     val keys: Set<Key>
 
-    /** Get the [Value] associated with [key]. */
+    /** [key]와 연결된 [Value]를 가져옵니다. */
     operator fun get(key: Key): Value?
 
-    /** Set the [Value] associated with [key]. */
+    /** [key]와 관련된 [Value]을 설정합니다. */
     operator fun set(key: Key, value: Value)
 
     /**
-     * Remove the [Value] referenced by [key].
+     * [key]에서 참조하는 [Value]를 제거합니다.
      *
-     * @return 'true' if [key] was present in the cache. Else, return 'false'.
+     * 캐시에 [key]가 있으면 @return 'true'입니다. 그렇지 않으면 '거짓'을 반환합니다.
      */
     fun remove(key: Key): Boolean
 
-    /** Remove all values from the memory cache. */
+    /** 메모리 캐시에서 모든 값을 제거합니다. */
     fun clear()
 
     /** @see ComponentCallbacks2.onTrimMemory */
