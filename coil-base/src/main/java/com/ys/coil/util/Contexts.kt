@@ -76,8 +76,8 @@ internal fun Context.getXmlDrawableCompat(resources: Resources, @XmlRes resId: I
     return resources.getDrawableCompat(resId, theme)
 }
 
-internal fun Context.getLifecycle(): Lifecycle? {
-    var context = this
+internal fun Context?.getLifecycle(): Lifecycle? {
+    var context: Context? = this
     while (true) {
         when (context) {
             is LifecycleOwner -> return context.lifecycle
