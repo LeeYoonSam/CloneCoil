@@ -10,7 +10,7 @@ import com.ys.coil.size.Scale
 import com.ys.coil.util.scale
 
 /**
- * 현재 드로어블에서 새 드로어블로 크로스페이드하는 [전환]입니다.
+ * 현재 드로어블에서 새 드로어블로 크로스페이드하는 [Transition]입니다.
  *
  * @param durationMillis 애니메이션의 지속 시간(밀리초)입니다.
  * @param preferExactIntrinsicSize [CrossfadeDrawable.preferExactIntrinsicSize]를 참조하십시오.

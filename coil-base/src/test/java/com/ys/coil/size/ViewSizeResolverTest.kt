@@ -21,21 +21,22 @@ import kotlin.test.assertTrue
 @RunWith(RobolectricTestRunner::class)
 class ViewSizeResolverTest {
 
-    private val context: Context = ApplicationProvider.getApplicationContext()
+    private lateinit var context: Context
     private lateinit var view: View
     private lateinit var  resolver: ViewSizeResolver<View>
     private lateinit var scope: CoroutineScope
 
-    @After
-    fun after() {
-        scope.cancel()
-    }
-
     @Before
     fun before() {
+        context = ApplicationProvider.getApplicationContext()
         view = View(context)
         resolver = ViewSizeResolver(view)
         scope = CoroutineScope(Dispatchers.Main.immediate)
+    }
+
+    @After
+    fun after() {
+        scope.cancel()
     }
 
     @Test
