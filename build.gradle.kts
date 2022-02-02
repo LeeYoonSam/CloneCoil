@@ -1,16 +1,23 @@
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.api.tasks.testing.logging.TestLogEvent
-
 buildscript {
+  apply(from = "buildSrc/plugins.gradle.kts")
   repositories {
     google()
     mavenCentral()
+    gradlePluginPortal()
   }
   dependencies {
-    classpath("com.android.tools.build:gradle:7.0.3")
-    classpath(kotlin("gradle-plugin", version = "1.5.21"))
+    classpath(rootProject.extra["androidPlugin"].toString())
+    classpath(rootProject.extra["kotlinPlugin"].toString())
+    classpath(rootProject.extra["binaryCompatibilityPlugin"].toString())
+    // classpath(rootProject.extra["ktlintPlugin"].toString())
   }
 }
+
+// apply(plugin = "binary-compatibility-validator")
+//
+// extensions.configure<kotlinx.validation.ApiValidationExtension> {
+//   ignoredProjects = mutableSetOf("coil-sample", "coil-test")
+// }
 
 allprojects {
   tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -21,8 +28,8 @@ allprojects {
 
   tasks.withType<Test> {
     testLogging {
-      exceptionFormat = TestExceptionFormat.FULL
-      events = setOf(TestLogEvent.SKIPPED, TestLogEvent.PASSED, TestLogEvent.FAILED)
+      exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+      events = setOf(org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED, org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED, org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED)
       showStandardStreams = true
     }
   }

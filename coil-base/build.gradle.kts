@@ -4,38 +4,10 @@ plugins {
   id("kotlin-parcelize")
 }
 
-android {
-  compileSdk = project.compileSdk
-
-  defaultConfig {
-    minSdk = project.minSdk
-    targetSdk = project.targetSdk
-    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-  }
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-  }
-  libraryVariants.all {
-    generateBuildConfigProvider?.configure { enabled = false }
-  }
+setupLibraryModule {
   sourceSets {
-    getByName("test").apply {
-      assets.srcDirs("src/sharedTest/assets")
-      java.srcDirs("src/sharedTest/java")
-    }
-    getByName("androidTest").apply {
-      assets.srcDirs("src/sharedTest/assets")
-      java.srcDirs("src/sharedTest/java")
-    }
-  }
-  testOptions {
-    unitTests.isIncludeAndroidResources = true
-    unitTests.isReturnDefaultValues = true
-  }
-  packagingOptions {
-    resources.pickFirsts += "META-INF/AL2.0"
-    resources.pickFirsts += "META-INF/LGPL2.1"
+    getByName("test").java.srcDir("src/sharedTest/java")
+    getByName("androidTest").java.srcDir("src/sharedTest/java")
   }
 }
 

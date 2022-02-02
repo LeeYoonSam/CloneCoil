@@ -3,41 +3,7 @@ plugins {
     id("kotlin-android")
 }
 
-android {
-    compileSdk = project.compileSdk
-
-    defaultConfig {
-        minSdk = project.minSdk
-        targetSdk = project.targetSdk
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile(
-                    "proguard-android-optimize.txt"
-                ),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    packagingOptions {
-        resources.pickFirsts += "META-INF/AL2.0"
-        resources.pickFirsts += "META-INF/LGPL2.1"
-    }
-    testOptions {
-        unitTests.isIncludeAndroidResources = true
-    }
-}
+setupLibraryModule()
 
 dependencies {
     implementation(Library.KOTLINX_COROUTINES_ANDROID)

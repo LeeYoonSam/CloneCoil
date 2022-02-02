@@ -10,6 +10,7 @@ object Library {
     const val ANDROIDX_EXIF_INTERFACE = "androidx.exifinterface:exifinterface:1.0.0"
     const val ANDROIDX_MULTIDEX = "androidx.multidex:multidex:2.0.1"
     const val ANDROIDX_RECYCLER_VIEW = "androidx.recyclerview:recyclerview:1.0.0"
+    const val ANDROIDX_VECTOR_DRAWABLE_ANIMATED = "androidx.vectordrawable:vectordrawable-animated:1.1.0"
 
     private const val APPCOMPAT_VERSION = "1.3.1"
     const val ANDROIDX_APPCOMPAT = "androidx.appcompat:appcompat:$APPCOMPAT_VERSION"

@@ -3,38 +3,20 @@ plugins {
   id("kotlin-android")
 }
 
-android {
-  compileSdk = project.compileSdk
-
+setupAppModule {
   defaultConfig {
     applicationId = "com.ys.coil.sample"
-    versionCode = project.versionCode
-    versionName = project.versionName
-    vectorDrawables.useSupportLibrary = true
-    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-	  minSdkVersion(24)
   }
-
   buildTypes {
     release {
-      isMinifyEnabled = false
-      proguardFiles(
-        getDefaultProguardFile(
-          "proguard-android-optimize.txt"
-        ),
-        "proguard-rules.pro"
-      )
+      isMinifyEnabled = true
+      isShrinkResources = true
+      proguardFiles("shrinker-rules.pro", "shrinker-rules-android.pro")
+      signingConfig = signingConfigs["debug"]
     }
   }
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-  }
-  kotlinOptions {
-    jvmTarget = "1.8"
-  }
-  testOptions {
-    unitTests.isIncludeAndroidResources = true
+  buildFeatures {
+    viewBinding = true
   }
 }
 
