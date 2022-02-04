@@ -1,10 +1,6 @@
 package com.ys.coil
 
-import androidx.multidex.MultiDexApplication
+import android.app.Application
 
-class Application : MultiDexApplication() {
-
-	override fun onCreate() {
-		super.onCreate()
-	}
+class Application : Application() {
 }
