@@ -18,7 +18,6 @@ fun Project.setupLibraryModule(block: LibraryExtension.() -> Unit = {}) {
 		}
 		testOptions {
 			unitTests.isIncludeAndroidResources = true
-			unitTests.isReturnDefaultValues = true
 		}
 		block()
 	}

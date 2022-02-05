@@ -1,16 +1,18 @@
+import org.jlleitschuh.gradle.ktlint.KtlintExtension
+
 buildscript {
-  apply(from = "buildSrc/plugins.gradle.kts")
-  repositories {
-    google()
-    mavenCentral()
-    gradlePluginPortal()
-  }
-  dependencies {
-    classpath(rootProject.extra["androidPlugin"].toString())
-    classpath(rootProject.extra["kotlinPlugin"].toString())
-    // classpath(rootProject.extra["binaryCompatibilityPlugin"].toString())
-    // classpath(rootProject.extra["ktlintPlugin"].toString())
-  }
+	apply(from = "buildSrc/plugins.gradle.kts")
+	repositories {
+		google()
+		mavenCentral()
+		gradlePluginPortal()
+	}
+	dependencies {
+		classpath(rootProject.extra["androidPlugin"].toString())
+		classpath(rootProject.extra["kotlinPlugin"].toString())
+		classpath("com.android.tools.build:gradle:7.1.0")
+		// classpath(rootProject.extra["binaryCompatibilityPlugin"].toString())
+	}
 }
 
 // apply(plugin = "binary-compatibility-validator")
@@ -20,17 +22,27 @@ buildscript {
 // }
 
 allprojects {
-  tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-      jvmTarget = "1.8"
-    }
-  }
+	group = project.groupId
+	version = project.versionName
 
-  tasks.withType<Test> {
-    testLogging {
-      exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-      events = setOf(org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED, org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED, org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED)
-      showStandardStreams = true
-    }
-  }
+	apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
+	extensions.configure<KtlintExtension>("ktlint") {
+		version by "0.42.1"
+		disabledRules by setOf("indent", "max-line-length", "parameter-list-wrapping")
+	}
+
+	tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+		kotlinOptions {
+			jvmTarget = "1.8"
+		}
+	}
+
+	tasks.withType<Test> {
+		testLogging {
+			exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+			events = setOf(org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED, org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED, org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED)
+			showStandardStreams = true
+		}
+	}
 }
