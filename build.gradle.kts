@@ -10,8 +10,8 @@ buildscript {
 	dependencies {
 		classpath(rootProject.extra["androidPlugin"].toString())
 		classpath(rootProject.extra["kotlinPlugin"].toString())
-		classpath("com.android.tools.build:gradle:7.1.0")
-		// classpath(rootProject.extra["binaryCompatibilityPlugin"].toString())
+		classpath(rootProject.extra["ktlintPlugin"].toString())
+		classpath(rootProject.extra["binaryCompatibilityPlugin"].toString())
 	}
 }
 
