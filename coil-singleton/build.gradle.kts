@@ -6,7 +6,6 @@ plugins {
 setupLibraryModule()
 
 dependencies {
-
 	api(project(":coil-base"))
 
 	addTestDependencies(org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION)

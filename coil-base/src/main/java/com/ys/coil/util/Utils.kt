@@ -21,7 +21,7 @@ import android.widget.ImageView.ScaleType.FIT_END
 import android.widget.ImageView.ScaleType.FIT_START
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.ys.coil.ComponentRegistry
-import com.ys.coil.R
+import com.ys.coil.base.R
 import com.ys.coil.decode.DataSource
 import com.ys.coil.decode.Decoder
 import com.ys.coil.disk.DiskCache

@@ -12,6 +12,7 @@ buildscript {
 		classpath(rootProject.extra["kotlinPlugin"].toString())
 		classpath(rootProject.extra["ktlintPlugin"].toString())
 		classpath(rootProject.extra["binaryCompatibilityPlugin"].toString())
+		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21")
 	}
 }
 
@@ -22,6 +23,12 @@ buildscript {
 // }
 
 allprojects {
+
+	repositories {
+		google()
+		mavenCentral()
+	}
+
 	group = project.groupId
 	version = project.versionName
 
