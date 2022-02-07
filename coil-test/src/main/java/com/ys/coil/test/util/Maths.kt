@@ -30,7 +30,7 @@ fun crossCorrelation(x: IntArray, y: IntArray): Double {
 }
 
 /**
- * Returns an average value of elements in the array.
+ * 배열에 있는 요소의 평균 값을 반환합니다.
  */
 fun IntArray.variance(): Double {
     if (isEmpty()) return Double.NaN
@@ -39,7 +39,7 @@ fun IntArray.variance(): Double {
 }
 
 /**
- * Round the given value to the nearest [Double] with [precision] number of decimal places.
+ * 주어진 값을 [precision] 소수 자릿수로 가장 가까운 [Double]로 반올림합니다.
  */
 fun Double.round(precision: Int): Double {
     val multiplier = 10.0.pow(precision)
