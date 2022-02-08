@@ -7,6 +7,7 @@
         <entry key="coil-base/src/androidTest/res/drawable/ic_android.xml" value="0.4361111111111111" />
         <entry key="coil-sample/src/main/res/layout/activity_main.xml" value="0.5046875" />
         <entry key="coil-sample/src/main/res/layout/list_item.xml" value="0.5046875" />
+        <entry key="coil-test/src/main/res/layout/ic_test_activity.xml" value="0.221875" />
       </map>
     </option>
   </component>
