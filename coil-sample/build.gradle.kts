@@ -21,6 +21,8 @@ setupAppModule {
 }
 
 dependencies {
+	implementation(project(":coil-singleton"))
+	implementation(project(":coil-gif"))
 
 	implementation(kotlin("stdlib", org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION))
 	implementation(Library.ANDROIDX_ACTIVITY)
