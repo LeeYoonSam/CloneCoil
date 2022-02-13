@@ -1,6 +1,7 @@
-package com.ys.coil
+package com.ys.coil.sample
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.ViewGroup
@@ -9,20 +10,22 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.ys.coil.ImageListAdapter.ViewHolder
-import com.ys.coil_default.api.load
+import com.ys.coil.load
+import com.ys.coil.request.SuccessResult
+import com.ys.coil.result
+import com.ys.coil.sample.ImageListAdapter.ViewHolder
+import com.ys.coil.sample.Screen.Detail
 import kotlin.math.ceil
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 class ImageListAdapter(
     context: Context,
     private val setScreen: (Screen) -> Unit
-) : ListAdapter<Image, ViewHolder>(Callback) {
+) : ListAdapter<Image, ViewHolder>(Callback.asConfig()) {
 
     private val maxColumnWidth = 320.dp(context)
     private val displayWidth = context.getDisplaySize().width
-    private val numColumns = ceil(displayWidth / maxColumnWidth).toInt()
+    val numColumns = ceil(displayWidth / maxColumnWidth).toInt()
     private val columnWidth = (displayWidth / numColumns.toDouble()).roundToInt()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,29 +37,29 @@ class ImageListAdapter(
             val item = getItem(position)
 
             updateLayoutParams {
-                val scale = min(1.0, columnWidth / item.width.toDouble())
-                height = (scale * item.height).roundToInt()
-                width = columnWidth
+	            val scale = columnWidth / item.width.toDouble()
+	            height = (scale * item.height).roundToInt()
+	            width = columnWidth
             }
 
-            load(item.url) {
+            load(item.uri) {
                 placeholder(ColorDrawable(item.color))
+	            kotlin.error(ColorDrawable(Color.RED))
+	            parameters(item.parameters)
             }
 
             setOnClickListener {
-                setScreen(Screen.Detail(item))
+	            setScreen(Detail(item, (result as? SuccessResult)?.memoryCacheKey))
             }
         }
     }
 
-    fun numColumns() = numColumns
-
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val image = itemView as ImageView
+	    val image get() = itemView as ImageView
     }
 
     private object Callback : DiffUtil.ItemCallback<Image>() {
-        override fun areItemsTheSame(old: Image, new: Image) = old.url == new.url
+        override fun areItemsTheSame(old: Image, new: Image) = old.uri == new.uri
         override fun areContentsTheSame(old: Image, new: Image) = old == new
     }
 }

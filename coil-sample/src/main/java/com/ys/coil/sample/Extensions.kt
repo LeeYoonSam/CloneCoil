@@ -1,6 +1,6 @@
 @file:Suppress("NOTHING_TO_INLINE")
 
-package com.ys.coil
+package com.ys.coil.sample
 
 import android.content.Context
 import android.graphics.Color

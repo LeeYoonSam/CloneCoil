@@ -1,4 +1,4 @@
-package com.ys.coil
+package com.ys.coil.sample
 
 import androidx.annotation.ColorInt
 import androidx.annotation.Px

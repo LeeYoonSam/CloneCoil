@@ -1,8 +1,12 @@
-package com.ys.coil
+package com.ys.coil.sample
 
 import android.app.Application
 import android.os.Build.VERSION
 import android.util.Log
+import com.ys.coil.BuildConfig
+import com.ys.coil.ImageLoader
+import com.ys.coil.ImageLoader.Builder
+import com.ys.coil.ImageLoaderFactory
 import com.ys.coil.disk.DiskCache
 import com.ys.coil.gif.decode.GifDecoder
 import com.ys.coil.gif.decode.ImageDecoderDecoder
@@ -13,7 +17,7 @@ import okhttp3.OkHttpClient
 
 class Application : Application(), ImageLoaderFactory {
 	override fun newImageLoader(): ImageLoader {
-		return ImageLoader.Builder(this)
+		return Builder(this)
 			.components {
 				// GIFs
 				if (VERSION.SDK_INT >= 28) {
