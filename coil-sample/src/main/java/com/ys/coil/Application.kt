@@ -1,8 +1,11 @@
 package com.ys.coil
 
 import android.app.Application
+import android.os.Build.VERSION
 import android.util.Log
 import com.ys.coil.disk.DiskCache
+import com.ys.coil.gif.decode.GifDecoder
+import com.ys.coil.gif.decode.ImageDecoderDecoder
 import com.ys.coil.memory.MemoryCache
 import com.ys.coil.util.DebugLogger
 import okhttp3.Dispatcher
@@ -11,9 +14,17 @@ import okhttp3.OkHttpClient
 class Application : Application(), ImageLoaderFactory {
 	override fun newImageLoader(): ImageLoader {
 		return ImageLoader.Builder(this)
+			.components {
+				// GIFs
+				if (VERSION.SDK_INT >= 28) {
+					add(ImageDecoderDecoder.Factory())
+				} else {
+					add(GifDecoder.Factory())
+				}
+			}
 			.memoryCache {
 				MemoryCache.Builder(this)
-					// Set the max size to 25% of the app's available memory.
+					// 최대 크기를 앱의 사용 가능한 메모리의 25%로 설정합니다.
 					.maxSizePercent(0.25)
 					.build()
 			}
