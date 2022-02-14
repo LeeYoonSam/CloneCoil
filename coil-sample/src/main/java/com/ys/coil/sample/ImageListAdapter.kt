@@ -44,7 +44,7 @@ class ImageListAdapter(
 
             load(item.uri) {
                 placeholder(ColorDrawable(item.color))
-	            kotlin.error(ColorDrawable(Color.RED))
+	            error(ColorDrawable(Color.RED))
 	            parameters(item.parameters)
             }
 

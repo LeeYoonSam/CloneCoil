@@ -3,7 +3,6 @@ package com.ys.coil.sample
 import android.app.Application
 import android.os.Build.VERSION
 import android.util.Log
-import com.ys.coil.BuildConfig
 import com.ys.coil.ImageLoader
 import com.ys.coil.ImageLoader.Builder
 import com.ys.coil.ImageLoaderFactory

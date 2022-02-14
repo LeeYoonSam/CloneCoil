@@ -3,7 +3,9 @@ plugins {
 	id("kotlin-android")
 }
 
-setupLibraryModule()
+setupLibraryModule {
+	compileSdk = project.compileSdk
+}
 
 dependencies {
 	constraints {

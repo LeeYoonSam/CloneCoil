@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
 import com.ys.coil.load
 import com.ys.coil.sample.Screen.Detail
-import com.ys.sample.databinding.ActivityMainBinding
+import com.ys.coil.sample.databinding.ActivityMainBinding
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
