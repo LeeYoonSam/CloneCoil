@@ -9,3 +9,4 @@ include(
 	"coil-sample",
 	"coil-test",
 )
+include(":coil-svg")
