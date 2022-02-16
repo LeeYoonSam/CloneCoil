@@ -44,6 +44,7 @@ android {
 dependencies {
 	implementation(project(":coil-singleton"))
 	implementation(project(":coil-gif"))
+	implementation(project(":coil-svg"))
 
 	implementation(kotlin("stdlib", org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION))
 	implementation(Library.ANDROIDX_ACTIVITY)
