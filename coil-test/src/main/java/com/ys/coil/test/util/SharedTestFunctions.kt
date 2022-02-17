@@ -1,6 +1,8 @@
 package com.ys.coil.test.util
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +31,11 @@ fun MockWebServer.enqueueImage(image: String, headers: Headers = Headers.headers
 	enqueue(MockResponse().setHeaders(headers).setBody(buffer))
 	return buffer.size
 }
+
+fun Context.decodeBitmapAsset(
+	fileName: String,
+	options: BitmapFactory.Options = BitmapFactory.Options().apply { inPreferredConfig = Bitmap.Config.ARGB_8888 }
+): Bitmap = checkNotNull(BitmapFactory.decodeStream(assets.open(fileName), null, options))
 
 /** Runs the given [block] on the main thread by default. */
 fun runBlockingTest(

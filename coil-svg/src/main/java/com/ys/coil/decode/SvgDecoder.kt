@@ -48,7 +48,7 @@ class SvgDecoder @JvmOverloads constructor(
 
 				if (svgWidth > 0 && svgHeight > 0) {
 					val multiplier = DecodeUtils.computeSizeMultiplier(
-						srcWidth = svgHeight,
+						srcWidth = svgWidth,
 						srcHeight = svgHeight,
 						dstWidth = size.width.toFloat(),
 						dstHeight = size.height.toFloat(),
@@ -100,11 +100,7 @@ class SvgDecoder @JvmOverloads constructor(
 		val useViewBoundsAsIntrinsicSize: Boolean = true
 	) : Decoder.Factory {
 
-		override fun create(
-			result: SourceResult,
-			options: Options,
-			imageLoader: ImageLoader
-		): Decoder? {
+		override fun create(result: SourceResult, options: Options, imageLoader: ImageLoader): Decoder? {
 			if (!isApplicable(result)) return null
 			return SvgDecoder(result.source, options, useViewBoundsAsIntrinsicSize)
 		}

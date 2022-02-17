@@ -16,6 +16,7 @@ import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 
 class Application : Application(), ImageLoaderFactory {
+
 	override fun newImageLoader(): ImageLoader {
 		return Builder(this)
 			.components {
