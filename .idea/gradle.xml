@@ -20,6 +20,7 @@
             <option value="$PROJECT_DIR$/coil-singleton" />
             <option value="$PROJECT_DIR$/coil-svg" />
             <option value="$PROJECT_DIR$/coil-test" />
+            <option value="$PROJECT_DIR$/coil-video" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

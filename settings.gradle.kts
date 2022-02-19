@@ -10,3 +10,4 @@ include(
 	"coil-test",
 )
 include(":coil-svg")
+include(":coil-video")
