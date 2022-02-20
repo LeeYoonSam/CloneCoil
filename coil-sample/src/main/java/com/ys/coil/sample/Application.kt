@@ -7,6 +7,7 @@ import com.ys.coil.ImageLoader
 import com.ys.coil.ImageLoader.Builder
 import com.ys.coil.ImageLoaderFactory
 import com.ys.coil.decode.SvgDecoder
+import com.ys.coil.decode.VideoFrameDecoder
 import com.ys.coil.disk.DiskCache
 import com.ys.coil.gif.decode.GifDecoder
 import com.ys.coil.gif.decode.ImageDecoderDecoder
@@ -28,6 +29,8 @@ class Application : Application(), ImageLoaderFactory {
 				}
 				// SVGs
 				add(SvgDecoder.Factory())
+				// Video frames
+				add(VideoFrameDecoder.Factory())
 			}
 			.memoryCache {
 				MemoryCache.Builder(this)
