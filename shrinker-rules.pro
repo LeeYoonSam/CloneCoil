@@ -7,7 +7,7 @@
 -dontnote *
 
 # Remove intrinsic assertions.
--assumenosideeffects class kotlin.jvm.internal.Intrinsics {
+-assumenosideeffects class Intrinsics {
     public static void checkExpressionValueIsNotNull(...);
     public static void checkNotNullExpressionValue(...);
     public static void checkParameterIsNotNull(...);
