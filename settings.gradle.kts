@@ -11,3 +11,4 @@ include(
 	"coil-sample",
 	"coil-test",
 )
+include(":coil-compose-base")

@@ -24,6 +24,14 @@ object Library {
     const val ANDROIDX_LIFECYCLE_LIVE_DATA = "androidx.lifecycle:lifecycle-livedata:$LIFECYCLE_VERSION"
     const val ANDROIDX_LIFECYCLE_VIEW_MODEL = "androidx.lifecycle:lifecycle-viewmodel-ktx:$LIFECYCLE_VERSION"
 
+	const val COMPOSE_VERSION = "1.0.4"
+	const val COMPOSE_FOUNDATION = "androidx.compose.foundation:foundation:$COMPOSE_VERSION"
+	const val COMPOSE_UI = "androidx.compose.ui:ui:$COMPOSE_VERSION"
+	const val COMPOSE_UI_TEST_JUNIT = "androidx.compose.ui:ui-test-junit4:$COMPOSE_VERSION"
+	const val COMPOSE_UI_TEST_MANIFEST = "androidx.compose.ui:ui-test-manifest:$COMPOSE_VERSION"
+
+	const val ACCOMPANIST_DRAWABLE_PAINTER = "com.google.accompanist:accompanist-drawablepainter:0.19.0"
+
     const val MATERIAL = "com.google.android.material:material:1.4.0"
 
 	const val ANDROID_SVG = "com.caverock:androidsvg-aar:1.4"

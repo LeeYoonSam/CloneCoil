@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/coil-base" />
             <option value="$PROJECT_DIR$/coil-bom" />
+            <option value="$PROJECT_DIR$/coil-compose-base" />
             <option value="$PROJECT_DIR$/coil-gif" />
             <option value="$PROJECT_DIR$/coil-sample" />
             <option value="$PROJECT_DIR$/coil-singleton" />
